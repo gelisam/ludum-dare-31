@@ -1,7 +1,6 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 module Main where
 
-import Data.Monoid
 import Data.Traversable
 import Graphics.Gloss
 import Graphics.Gloss.Interface.FRP.ReactiveBanana
@@ -10,14 +9,10 @@ import Reactive.Banana.Frameworks
 
 import Animation
 import Graphics
-import Graphics.Gloss.Extra
 import Input
+import TitleScreen
 import Types
 import Vec2d
-
-
-gameTitle :: String
-gameTitle = "More of the Same"
 
 
 mainBanana :: forall t. Frameworks t
@@ -105,49 +100,11 @@ mainBanana timeDeltaEvent inputEvent = return picture
                           <*> debugMessages
     
     
-    -- title screen
-    
-    titleScreen :: Behavior t Picture
-    titleScreen = pictures <$> sequenceA
-                [ pure whiteFilter
-                , pure title
-                , pure subtitle
-                , flickeringMessage
-                ]
-      where
-        title = translate (-309) 100
-                $ scale 0.5 0.5
-                $ text gameTitle
-        
-        subtitle = translate (-290) 50
-                 $ scale 0.2 0.2
-                 $ textWithAccent
-        
-        textWithAccent = text "Samuel Gelineau's entry for Ludum Dare 31"
-                      <> accent
-        
-        accent = line [(x, y), (x + dx, y + dy)]
-          where
-            (x, y) = (650, 80)
-            (dx, dy) = (20, 10)
-        
-        flickeringMessage :: Behavior t Picture
-        flickeringMessage = flickeringPicture <$> (animatedValue True (blinking 1 0.3) <$> time)
-                                              <*> pure startMessage
-        
-        startMessage = translate (-250) (-100)
-                     $ scale 0.3 0.3
-                     $ text "Press any key to begin!"
-        
-        whiteFilter = color (makeColor 1 1 1 0.9)
-                    $ rectangleSolid 640 480
-    
-    
     -- this frame's graphics
     
     picture :: Behavior t Picture
     picture = pictures <$> sequenceA [ renderGameState <$> gameState
-                                     , titleScreen
+                                     , titleScreen time
                                      ]
 
 main :: IO ()
