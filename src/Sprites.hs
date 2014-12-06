@@ -27,7 +27,8 @@ goalPicture = circle 10
            <> letterPicture "G"
 
 playerPicture :: Picture
-playerPicture = circle 10
+playerPicture = color white (thickCircle 0 20)
+             <> circle 10
              <> rotate 90 (letterPicture ":)")
 
 lockedDoorPicture :: Picture
