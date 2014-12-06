@@ -49,3 +49,8 @@ goalPicture = circle 10
 playerPicture :: Picture
 playerPicture = circle 10
              <> rotate 90 (letterPicture ":)")
+
+lockedDoorPicture :: Picture
+lockedDoorPicture = circle 10
+                 <> rotate (-90) (letterPicture "D")
+                 <> rotate (-90) (letterPicture "-")
