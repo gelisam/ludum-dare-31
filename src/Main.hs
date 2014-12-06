@@ -34,6 +34,12 @@ mainBanana _ inputEvent = return picture
     goalEvent :: Event t ()
     goalEvent = const () <$> filterE (== Goal) newTile
     
+    
+    debugEvent :: Event t String
+    debugEvent = (const "next level" <$> goalEvent)
+         `union` (const "prev level" <$> startEvent)
+    
+    
     levelNumber :: Behavior t LevelNumber
     levelNumber = accumB 0 $ (const (+ 1) <$> goalEvent)
                      `union` (const (subtract 1) <$> startEvent)
@@ -47,8 +53,11 @@ mainBanana _ inputEvent = return picture
     accumulatedChanges :: Behavior t [LevelChanges]
     accumulatedChanges = pure []
     
+    debugMessages :: Behavior t [String]
+    debugMessages = accumB [] $ (:) <$> debugEvent
+    
     gameState :: Behavior t GameState
-    gameState = GameState <$> levelNumber <*> stage <*> player <*> accumulatedChanges
+    gameState = GameState <$> levelNumber <*> stage <*> player <*> accumulatedChanges <*> debugMessages
     
     picture :: Behavior t Picture
     picture = renderGameState <$> gameState

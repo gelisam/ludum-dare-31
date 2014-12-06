@@ -25,6 +25,7 @@ data GameState = GameState
   , gStage :: Stage
   , gPlayer :: Player
   , gAccumulatedChanges :: [LevelChanges]
+  , gDebugMessages :: [String]
   } deriving (Show, Eq)
 
 initialStage = [[Start, Floor, Floor, Floor, Floor]
@@ -34,4 +35,4 @@ initialStage = [[Start, Floor, Floor, Floor, Floor]
                ,[Floor, Floor, Floor, Floor, Goal]]
 
 initialGameState :: GameState
-initialGameState = GameState 0 initialStage (V 3 4) []
+initialGameState = GameState 0 initialStage (V 3 4) [] []
