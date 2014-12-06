@@ -209,9 +209,9 @@ decelerate anim = anim'''
     anim''' = matchDuration (duration anim) anim''
 
 
-isAnimating :: Animation a -> Float -> Bool
-isAnimating anim t = t < duration anim
+isAnimationInProgress :: Animation a -> Float -> Bool
+isAnimationInProgress anim t = t < duration anim
 
-animatedValue :: a -> Animation a -> Float -> a
-animatedValue idleValue anim t | isAnimating anim t = snapshot anim t
-                               | otherwise          = idleValue
+animationValue :: a -> Animation a -> Float -> a
+animationValue idleValue anim t | isAnimationInProgress anim t = snapshot anim t
+                                | otherwise                    = idleValue

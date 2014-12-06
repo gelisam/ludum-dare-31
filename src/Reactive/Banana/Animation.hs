@@ -12,9 +12,9 @@ animateB :: forall a t. Frameworks t
          -> a
          -> Event t (Animation a)
          -> Behavior t a
-animateB time x0 startAnim = animatedValue <$> idleValue
-                                           <*> currentAnimation
-                                           <*> localTime
+animateB time x0 startAnim = animationValue <$> idleValue
+                                            <*> currentAnimation
+                                            <*> localTime
   where
     idleValue :: Behavior t a
     idleValue = accumB x0 $ const . lastFrame <$> startAnim

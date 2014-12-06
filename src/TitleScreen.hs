@@ -77,7 +77,7 @@ titleScreen time inputEvent = (isVisible, picture)
                 (dx, dy) = (20, 10)
         
         flickeringMessage :: Behavior t Picture
-        flickeringMessage = flickeringPicture <$> (animatedValue True (blinking 1 0.3) <$> time)
+        flickeringMessage = flickeringPicture <$> (animationValue True (blinking 1 0.3) <$> time)
                                               <*> pure message
           where
             message :: Picture

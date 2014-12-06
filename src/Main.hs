@@ -54,7 +54,7 @@ mainBanana time inputEvent = return picture
                                                        (fmap fromIntegral startPosition)
     
     animationInProgress :: Behavior t Bool
-    animationInProgress = or <$> sequenceA [ isAnimating <$> playerAnimation <*> time
+    animationInProgress = or <$> sequenceA [ isAnimationInProgress <$> playerAnimation <*> time
                                            , isTitleScreenAnimating
                                            ]
     
@@ -79,9 +79,9 @@ mainBanana time inputEvent = return picture
     playerTilePos = accumB startPosition $ (+) <$> dirEvent
     
     playerGraphics :: Behavior t PlayerGraphics
-    playerGraphics = animatedValue <$> (PlayerGraphics True <$> fmap fromIntegral <$> playerTilePos)
-                                   <*> playerAnimation
-                                   <*> time
+    playerGraphics = animationValue <$> (PlayerGraphics True <$> fmap fromIntegral <$> playerTilePos)
+                                    <*> playerAnimation
+                                    <*> time
     
     accumulatedChanges :: Behavior t [LevelChanges]
     accumulatedChanges = pure []
