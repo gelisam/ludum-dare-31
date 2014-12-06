@@ -25,11 +25,11 @@ renderStage :: Stage -> Picture
 renderStage = pictureGrid 20 20
             . (fmap.fmap) tilePicture
 
-atStagePos :: V Int -> Picture -> Picture
+atStagePos :: V Float -> Picture -> Picture
 atStagePos = atGridPos 20 20
 
 
-renderPlayer :: Player -> Picture
+renderPlayer :: ScreenPos -> Picture
 renderPlayer pos = atStagePos pos playerPicture
 
 
@@ -45,5 +45,5 @@ renderDebugMessages = pictureCol 11 . fmap renderDebugMessage
 renderGameState :: GameState -> Picture
 renderGameState (GameState {..}) = renderHUD gLevelNumber
                                 <> renderStage gStage
-                                <> insideStage gStage (renderPlayer gPlayer)
+                                <> insideStage gStage (renderPlayer gPlayerScreenPos)
                                 <> renderDebugMessages gDebugMessages

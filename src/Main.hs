@@ -21,8 +21,8 @@ mainBanana _ inputEvent = return picture
     dirEvent :: Event t (V Int)
     dirEvent = filterJust $ keydown2dir <$> inputEvent
     
-    newPos :: Event t Player
-    newPos = (+) <$> player <@> dirEvent
+    newPos :: Event t TilePos
+    newPos = (+) <$> playerTilePos <@> dirEvent
     
     newTile :: Event t Tile
     newTile = filterJust $ atV <$> stage <@> newPos
@@ -46,8 +46,11 @@ mainBanana _ inputEvent = return picture
     stage :: Behavior t Stage
     stage = pure initialStage
     
-    player :: Behavior t Player
-    player = accumB startPosition $ (+) <$> dirEvent
+    playerTilePos :: Behavior t TilePos
+    playerTilePos = accumB startPosition $ (+) <$> dirEvent
+    
+    playerScreenPos :: Behavior t ScreenPos
+    playerScreenPos = fmap fromIntegral <$> playerTilePos
     
     accumulatedChanges :: Behavior t [LevelChanges]
     accumulatedChanges = pure []
@@ -56,7 +59,12 @@ mainBanana _ inputEvent = return picture
     debugMessages = accumB [] $ (:) <$> debugEvent
     
     gameState :: Behavior t GameState
-    gameState = GameState <$> levelNumber <*> stage <*> player <*> accumulatedChanges <*> debugMessages
+    gameState = GameState <$> levelNumber
+                          <*> stage
+                          <*> playerTilePos
+                          <*> playerScreenPos
+                          <*> accumulatedChanges
+                          <*> debugMessages
     
     picture :: Behavior t Picture
     picture = renderGameState <$> gameState
