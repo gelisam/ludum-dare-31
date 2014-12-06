@@ -16,11 +16,22 @@ import Types
 
 titleScreen :: forall t. Frameworks t
             => Behavior t Float
-            -> Behavior t Float
             -> Event t InputEvent
-            -> Behavior t Picture
-titleScreen alpha time inputEvent = fadingTitleScreen
+            -> (Behavior t Bool, Behavior t Picture)
+titleScreen time inputEvent = (isVisible, picture)
   where
+    alphaAnimation :: Animation Float
+    alphaAnimation = interpolate 0.75 1 0
+    
+    alpha :: Behavior t Float
+    alpha = animatedValue 0 alphaAnimation <$> time
+    
+    isVisible :: Behavior t Bool
+    isVisible = isAnimating alphaAnimation <$> time
+    
+    picture :: Behavior t Picture
+    picture = fadingTitleScreen
+    
     fadingTitleScreen :: Behavior t Picture
     fadingTitleScreen = mappend <$> whiteFilter
                                 <*> movingText
