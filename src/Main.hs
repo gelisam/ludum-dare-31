@@ -47,7 +47,7 @@ mainBanana _ inputEvent = return picture
     stage = pure initialStage
     
     player :: Behavior t Player
-    player = accumB 0 $ (+) <$> dirEvent
+    player = accumB startPosition $ (+) <$> dirEvent
     
     accumulatedChanges :: Behavior t [LevelChanges]
     accumulatedChanges = pure []

@@ -28,6 +28,12 @@ data GameState = GameState
   , gDebugMessages :: [String]
   } deriving (Show, Eq)
 
+startPosition :: Player
+startPosition = 0
+
+goalPosition :: Player
+goalPosition = 4
+
 initialStage :: [[Tile]]
 initialStage = [[Start, Floor, Floor, Floor, Floor]
                ,[Floor, Floor, Floor, Floor, Floor]
@@ -36,4 +42,4 @@ initialStage = [[Start, Floor, Floor, Floor, Floor]
                ,[Floor, Floor, Floor, Floor, Goal]]
 
 initialGameState :: GameState
-initialGameState = GameState 0 initialStage (V 3 4) [] []
+initialGameState = GameState 0 initialStage startPosition [] []
