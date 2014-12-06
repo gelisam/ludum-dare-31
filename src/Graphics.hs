@@ -5,7 +5,6 @@ import Data.Monoid
 import Graphics.Gloss
 
 import Vec2d
-import Debug.Trace
 
 
 pictureRow :: Float -> [Picture] -> Picture
@@ -19,7 +18,7 @@ pictureCol dy (x:xs) = x <> translate 0 dy (pictureCol dy xs)
 
 grid :: Float -> Float -> [[Picture]] -> Picture
 grid _ _ [] = blank
-grid cellSizeX cellSizeY cells = traceShow (cellSizeV, dimV, totalSizeV, centerX, centerY) $ translate (-centerX) (-centerY)
+grid cellSizeX cellSizeY cells = translate (-centerX) (-centerY)
                                $ pictureCol cellSizeY
                                $ pictureRow cellSizeX
                              <$> cells
@@ -31,33 +30,3 @@ grid cellSizeX cellSizeY cells = traceShow (cellSizeV, dimV, totalSizeV, centerX
     cellSizeV = V cellSizeX cellSizeY
     totalSizeV = cellSizeV * dimV
     V centerX centerY = totalSizeV / 2
-
-
-letterPicture :: String -> Picture
-letterPicture s = translate (-5) (-6)
-                $ scale 0.12 0.12
-                $ text s
-
-startPicture :: Picture
-startPicture = circle 10
-            <> letterPicture "S"
-
-goalPicture :: Picture
-goalPicture = circle 10
-           <> letterPicture "G"
-
-playerPicture :: Picture
-playerPicture = circle 10
-             <> rotate 90 (letterPicture ":)")
-
-lockedDoorPicture :: Picture
-lockedDoorPicture = unlockedDoorPicture
-                 <> rotate (-90) (letterPicture "-")
-
-unlockedDoorPicture :: Picture
-unlockedDoorPicture = circle 10
-                   <> rotate (-90) (letterPicture "D")
-
-keyPicture :: Picture
-keyPicture = circle 10
-          <> letterPicture "K"

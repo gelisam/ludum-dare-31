@@ -6,6 +6,7 @@ import Reactive.Banana
 import Reactive.Banana.Frameworks
 
 import Graphics
+import Sprites
 import Vec2d
 
 
