@@ -10,6 +10,7 @@ import Reactive.Banana.Frameworks
 
 import Animation
 import Graphics.Gloss.Extra
+import Popup
 import Types
 
 
@@ -32,11 +33,8 @@ titleScreen alpha time inputEvent = fadingTitleScreen
         white' = makeColor 1 1 1 <$> (0.9 *) <$> alpha
     
     movingText :: Behavior t Picture
-    movingText = translate 0 <$> textOffset
-                             <*> (pictures <$> sequenceA textParts)
-    
-    textOffset :: Behavior t Float
-    textOffset = (480 *) . (1 -) <$> alpha
+    movingText = rotateAway <$> ((1 -) <$> alpha)
+                            <*> (pictures <$> sequenceA textParts)
     
     textParts :: [Behavior t Picture]
     textParts = [ pure title

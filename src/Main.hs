@@ -100,7 +100,7 @@ mainBanana time inputEvent = return picture
     -- this frame's graphics
     
     titleScreenAlpha :: Behavior t Float
-    titleScreenAlpha = animatedValue 0 (interpolate 2 1 0) <$> time
+    titleScreenAlpha = animatedValue 0 (interpolate 0.75 1 0) <$> time
     
     picture :: Behavior t Picture
     picture = pictures <$> sequenceA [ renderGameState <$> gameState
