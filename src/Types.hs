@@ -34,4 +34,4 @@ initialStage = [[Start, Floor, Floor, Floor, Floor]
                ,[Floor, Floor, Floor, Floor, Goal]]
 
 initialGameState :: GameState
-initialGameState = GameState 0 initialStage (V 0 0) []
+initialGameState = GameState 0 initialStage (V 3 4) []

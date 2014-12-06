@@ -28,6 +28,9 @@ insideGrid cellSizeX cellSizeY cells = translate (-centerX) (-centerY)
     totalSizeV = cellSizeV * dimV
     V centerX centerY = totalSizeV / 2
 
+atGridPos :: Float -> Float -> V Int -> Picture -> Picture
+atGridPos dx dy (V x y) = translate (fromIntegral x * dx) (fromIntegral y * dy)
+
 pictureGrid :: Float -> Float -> [[Picture]] -> Picture
 pictureGrid _ _ [] = blank
 pictureGrid dx dy cells = insideGrid dx dy cells
