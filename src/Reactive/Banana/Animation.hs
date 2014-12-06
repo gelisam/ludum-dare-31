@@ -1,4 +1,4 @@
-{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE DeriveFunctor, ScopedTypeVariables #-}
 module Reactive.Banana.Animation where
 
 import Reactive.Banana
@@ -7,18 +7,17 @@ import Reactive.Banana.Frameworks
 import Animation
 
 
-data Animated a = Animated
-  { animatedValue :: a
-  , isAnimating :: Bool
-  } deriving (Show, Eq)
+data Animated t a = Animated
+  { animatedValue :: Behavior t a
+  , isAnimating :: Behavior t Bool
+  } deriving Functor
 
 animateB :: forall a t. Frameworks t
          => Behavior t Float
          -> a
          -> Event t (Animation a)
-         -> Behavior t (Animated a)
-animateB time x0 startAnim = Animated <$> currentValue
-                                      <*> isCurrentAnimationInProgress
+         -> Animated t a
+animateB time x0 startAnim = Animated currentValue isCurrentAnimationInProgress
   where
     currentValue :: Behavior t a
     currentValue = animationValue <$> idleValue

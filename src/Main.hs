@@ -56,7 +56,7 @@ mainBanana time inputEvent = return picture
     
     animationInProgress :: Behavior t Bool
     animationInProgress = or <$> sequenceA [ isAnimationInProgress <$> playerAnimation <*> time
-                                           , isAnimating <$> animatedTitleScreen
+                                           , isAnimating animatedTitleScreen
                                            ]
     
     
@@ -101,12 +101,12 @@ mainBanana time inputEvent = return picture
     
     -- this frame's graphics
     
-    animatedTitleScreen :: Behavior t (Animated Picture)
+    animatedTitleScreen :: Animated t Picture
     animatedTitleScreen = titleScreen time inputEvent
     
     picture :: Behavior t Picture
     picture = pictures <$> sequenceA [ renderGameState <$> gameState
-                                     , animatedValue <$> animatedTitleScreen
+                                     , animatedValue animatedTitleScreen
                                      ]
 
 main :: IO ()

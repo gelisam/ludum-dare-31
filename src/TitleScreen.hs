@@ -20,8 +20,8 @@ import Types
 titleScreen :: forall t. Frameworks t
             => Behavior t Float
             -> Event t InputEvent
-            -> Behavior t (Animated Picture)
-titleScreen time inputEvent = Animated <$> picture <*> isVisible
+            -> Animated t Picture
+titleScreen time inputEvent = Animated picture isVisible
   where
     fadeOut :: Animation Float
     fadeOut = interpolate 0.75 1 0
@@ -29,11 +29,11 @@ titleScreen time inputEvent = Animated <$> picture <*> isVisible
     anyKeyEvent :: Event t Key
     anyKeyEvent = whenE isVisible $ keydownEvent inputEvent
     
-    animatedAlpha :: Behavior t (Animated Float)
+    animatedAlpha :: Animated t Float
     animatedAlpha = animateB time 1 $ const fadeOut <$> anyKeyEvent
     
     alpha :: Behavior t Float
-    alpha = animatedValue <$> animatedAlpha
+    alpha = animatedValue animatedAlpha
     
     isVisible :: Behavior t Bool
     isVisible = stepper True $ const False <$> anyKeyEvent
