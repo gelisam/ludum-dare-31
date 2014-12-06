@@ -8,17 +8,17 @@ import Vec2d
 
 
 pictureRow :: Float -> [Picture] -> Picture
-pictureRow dx [] = blank
+pictureRow _ [] = blank
 pictureRow dx (x:xs) = x <> translate dx 0 (pictureRow dx xs)
 
 pictureCol :: Float -> [Picture] -> Picture
-pictureCol dy [] = blank
+pictureCol _ [] = blank
 pictureCol dy (x:xs) = x <> translate 0 dy (pictureCol dy xs)
 
 
-grid :: Float -> Float -> [[Picture]] -> Picture
-grid _ _ [] = blank
-grid cellSizeX cellSizeY cells = translate (-centerX) (-centerY)
+pictureGrid :: Float -> Float -> [[Picture]] -> Picture
+pictureGrid _ _ [] = blank
+pictureGrid cellSizeX cellSizeY cells = translate (-centerX) (-centerY)
                                $ pictureCol cellSizeY
                                $ pictureRow cellSizeX
                              <$> cells

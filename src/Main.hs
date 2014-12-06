@@ -7,17 +7,17 @@ import Reactive.Banana.Frameworks
 
 import Graphics
 import Sprites
-import Vec2d
+import Types
 
-
-emptyStage :: [[Picture]]
-emptyStage = replicate 10 (replicate 10 keyPicture)
 
 mainBanana :: Frameworks t
            => Event t Float
            -> Event t InputEvent
            -> Moment t (Behavior t Picture)
-mainBanana _ _ = return (pure (grid 20 20 emptyStage))
+mainBanana _ _ = return
+               $ pure
+               $ pictureGrid 20 20
+               $ (fmap.fmap) tilePicture initialStage
 
 main :: IO ()
 main = playBanana (InWindow "Ludum Dare 31" (640, 480) (800, 50))

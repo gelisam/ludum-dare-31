@@ -3,11 +3,20 @@ module Sprites where
 import Data.Monoid
 import Graphics.Gloss
 
+import Types
+
 
 letterPicture :: String -> Picture
 letterPicture s = translate (-5) (-6)
                 $ scale 0.12 0.12
                 $ text s
+
+
+floorPicture :: Picture
+floorPicture = blank
+
+wallPicture :: Picture
+wallPicture = circle 10
 
 startPicture :: Picture
 startPicture = circle 10
@@ -32,3 +41,13 @@ unlockedDoorPicture = circle 10
 keyPicture :: Picture
 keyPicture = circle 10
           <> letterPicture "K"
+
+
+tilePicture :: Tile -> Picture
+tilePicture Start        = startPicture
+tilePicture Goal         = goalPicture
+tilePicture Floor        = floorPicture
+tilePicture Wall         = wallPicture
+tilePicture LockedDoor   = lockedDoorPicture
+tilePicture UnlockedDoor = unlockedDoorPicture
+tilePicture (Key _)      = keyPicture
