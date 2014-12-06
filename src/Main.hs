@@ -53,8 +53,12 @@ mainBanana timeDeltaEvent inputEvent = return picture
     playerAnimation = pure (interpolate 1 (fmap fromIntegral goalPosition)
                                           (fmap fromIntegral startPosition))
     
+    playerAnimationFlicker :: Behavior t (Animation Bool)
+    playerAnimationFlicker = pure (flickering 1 0.1)
+    
     animationInProgress :: Behavior t Bool
     animationInProgress = or <$> sequenceA [ isAnimating <$> playerAnimation <*> time
+                                           , isAnimating <$> playerAnimationFlicker <*> time
                                            ]
     
     
@@ -82,6 +86,9 @@ mainBanana timeDeltaEvent inputEvent = return picture
                                     <*> playerAnimation
                                     <*> time
     
+    playerVisible :: Behavior t Bool
+    playerVisible = animatedValue True <$> playerAnimationFlicker <*> time
+    
     accumulatedChanges :: Behavior t [LevelChanges]
     accumulatedChanges = pure []
     
@@ -93,6 +100,7 @@ mainBanana timeDeltaEvent inputEvent = return picture
                           <*> stage
                           <*> playerTilePos
                           <*> playerScreenPos
+                          <*> playerVisible
                           <*> accumulatedChanges
                           <*> debugMessages
     

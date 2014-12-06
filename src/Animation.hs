@@ -79,6 +79,14 @@ skip :: Float -> Animation a -> Animation a
 skip dt (Animation {..}) = Animation (\t -> snapshot (t + dt))
                                      (duration - dt)
 
+-- |
+-- >>> sampleAnimation $ trim 3 anim
+-- ["foo","foo","bar"]
+-- >>> sampleAnimation $ trim 3 (static "foo")
+-- ["foo","foo","foo"]
+trim :: Float -> Animation a -> Animation a
+trim targetDuration anim = anim { duration = targetDuration }
+
 
 -- |
 -- >>> sampleAnimation $ slowMotion 2 anim
@@ -127,6 +135,16 @@ interpolate :: Fractional a => Float -> a -> a -> Animation a
 interpolate targetDuration x0 xZ = matchDuration targetDuration
                                  $ Animation (\t -> x0 + realToFrac t * (xZ - x0))
                                              1.0
+
+-- |
+-- >>> sampleAnimation $ flickering 4 1
+-- [False,True,False,True]
+-- >>> sampleAnimation $ flickering 4 2
+-- [False,False,True,True]
+flickering :: Float -> Float -> Animation Bool
+flickering targetDuration flickerDuration = trim targetDuration
+                                          $ mreplicate (ceiling (targetDuration / flickerDuration / 2))
+                                          $ idle flickerDuration False <> idle flickerDuration True
 
 
 -- |

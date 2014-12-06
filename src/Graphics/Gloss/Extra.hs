@@ -37,3 +37,8 @@ pictureGrid dx dy cells = insideGrid dx dy cells
                         $ pictureCol dy
                         $ pictureRow dx
                       <$> cells
+
+
+flickeringPicture :: Bool -> Picture -> Picture
+flickeringPicture True = id
+flickeringPicture False = const blank

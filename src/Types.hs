@@ -26,6 +26,7 @@ data GameState = GameState
   , gStage              :: Stage
   , gPlayerTilePos      :: TilePos
   , gPlayerScreenPos    :: ScreenPos
+  , gPlayerVisible      :: Bool
   , gAccumulatedChanges :: [LevelChanges]
   , gDebugMessages      :: [String]
   } deriving (Show, Eq)

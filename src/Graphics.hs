@@ -29,8 +29,9 @@ atStagePos :: V Float -> Picture -> Picture
 atStagePos = atGridPos 20 20
 
 
-renderPlayer :: ScreenPos -> Picture
-renderPlayer pos = atStagePos pos playerPicture
+renderPlayer :: Bool -> ScreenPos -> Picture
+renderPlayer visible pos = flickeringPicture visible
+                         $ atStagePos pos playerPicture
 
 
 renderDebugMessage :: String -> Picture
@@ -45,5 +46,5 @@ renderDebugMessages = pictureCol 11 . fmap renderDebugMessage
 renderGameState :: GameState -> Picture
 renderGameState (GameState {..}) = renderHUD gLevelNumber
                                 <> renderStage gStage
-                                <> insideStage gStage (renderPlayer gPlayerScreenPos)
+                                <> insideStage gStage (renderPlayer gPlayerVisible gPlayerScreenPos)
                                 <> renderDebugMessages gDebugMessages
