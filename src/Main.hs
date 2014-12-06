@@ -30,11 +30,11 @@ mainBanana time inputEvent = return picture
     dirEvent :: Event t (V Int)
     dirEvent = whenE canMove $ filterJust $ keydown2dir <$> inputEvent
     
-    newPos :: Event t TilePos
-    newPos = (+) <$> playerTilePos <@> dirEvent
+    newTilePos :: Event t TilePos
+    newTilePos = (+) <$> playerTilePos <@> dirEvent
     
     newTile :: Event t Tile
-    newTile = filterJust $ atV <$> stage <@> newPos
+    newTile = filterJust $ atV <$> stage <@> newTilePos
     
     
     -- consequences of player movement
@@ -48,14 +48,23 @@ mainBanana time inputEvent = return picture
     
     -- animation stuff
     
-    playerAnimation :: Behavior t (Animation PlayerGraphics)
-    playerAnimation = pure
-                    $ PlayerGraphics <$> flickering 0.1
-                                     <*> interpolate 1 (fmap fromIntegral goalPosition)
-                                                       (fmap fromIntegral startPosition)
+    playerMovement :: Event t (Animation ScreenPos)
+    playerMovement = interpolate 0.05 <$> oldPos <@> newPos
+      where
+        oldPos :: Behavior t ScreenPos
+        oldPos = fmap fromIntegral <$> playerTilePos
+        
+        newPos :: Event t ScreenPos
+        newPos = fmap fromIntegral <$> newTilePos
+    
+    animatedPlayerScreenPos :: Animated t ScreenPos
+    animatedPlayerScreenPos = animateB time initialPlayerScreenPos playerMovement
+    
+    animatedPlayer :: Animated t PlayerGraphics
+    animatedPlayer = PlayerGraphics True <$> animatedPlayerScreenPos
     
     animationInProgress :: Behavior t Bool
-    animationInProgress = or <$> sequenceA [ isAnimationInProgress <$> playerAnimation <*> time
+    animationInProgress = or <$> sequenceA [ isAnimating animatedPlayer
                                            , isAnimating animatedTitleScreen
                                            ]
     
@@ -80,9 +89,7 @@ mainBanana time inputEvent = return picture
     playerTilePos = accumB startPosition $ (+) <$> dirEvent
     
     playerGraphics :: Behavior t PlayerGraphics
-    playerGraphics = animationValue <$> (PlayerGraphics True <$> fmap fromIntegral <$> playerTilePos)
-                                    <*> playerAnimation
-                                    <*> time
+    playerGraphics = animatedValue animatedPlayer
     
     accumulatedChanges :: Behavior t [LevelChanges]
     accumulatedChanges = pure []

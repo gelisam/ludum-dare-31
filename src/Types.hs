@@ -45,6 +45,9 @@ startPosition = 0
 goalPosition :: TilePos
 goalPosition = 4
 
+initialPlayerScreenPos :: ScreenPos
+initialPlayerScreenPos = fmap fromIntegral startPosition
+
 initialStage :: [[Tile]]
 initialStage = [[Start, Floor, Floor, Floor, Floor]
                ,[Floor, Floor, Floor, Floor, Floor]
