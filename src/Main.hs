@@ -19,8 +19,11 @@ mainBanana :: forall t. Frameworks t
            -> Moment t (Behavior t Picture)
 mainBanana timeDeltaEvent inputEvent = return picture
   where
+    canMove :: Behavior t Bool
+    canMove = not <$> animationInProgress
+    
     dirEvent :: Event t (V Int)
-    dirEvent = filterJust $ keydown2dir <$> inputEvent
+    dirEvent = whenE canMove $ filterJust $ keydown2dir <$> inputEvent
     
     newPos :: Event t TilePos
     newPos = (+) <$> playerTilePos <@> dirEvent
@@ -41,6 +44,9 @@ mainBanana timeDeltaEvent inputEvent = return picture
     playerAnimation :: Behavior t (Animation ScreenPos)
     playerAnimation = pure (interpolate 1 (fmap fromIntegral goalPosition)
                                           (fmap fromIntegral startPosition))
+    
+    animationInProgress :: Behavior t Bool
+    animationInProgress = isAnimating <$> playerAnimation <*> time
     
     
     debugEvent :: Event t String
