@@ -1,7 +1,6 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 module Main where
 
-import Data.Monoid
 import Graphics.Gloss
 import Graphics.Gloss.Interface.FRP.ReactiveBanana
 import Reactive.Banana

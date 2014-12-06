@@ -28,6 +28,7 @@ data GameState = GameState
   , gDebugMessages :: [String]
   } deriving (Show, Eq)
 
+initialStage :: [[Tile]]
 initialStage = [[Start, Floor, Floor, Floor, Floor]
                ,[Floor, Floor, Floor, Floor, Floor]
                ,[Floor, Floor, Floor, Floor, Floor]
