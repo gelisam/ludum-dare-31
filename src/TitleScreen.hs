@@ -65,7 +65,7 @@ titleScreen time inputEvent = animatedTitleScreen
     
     
     -- white filter
-    
+
     fadingWhiteFilter :: Animated t Picture
     fadingWhiteFilter = animateB time staticWhiteFilter
                       $ whiteFilterAnimation <$ anyKeyEvent
@@ -75,15 +75,6 @@ titleScreen time inputEvent = animatedTitleScreen
         
         fadeOut :: Animation Float
         fadeOut = interpolate 2 1 0
-    
-    staticWhiteFilter :: Picture
-    staticWhiteFilter = makeWhiteFilter 1
-    
-    makeWhiteFilter :: Float -> Picture
-    makeWhiteFilter alpha = color white' (rectangleSolid 640 480)
-      where
-        white' :: Color
-        white' = makeColor 1 1 1 (0.9 * alpha)
     
     
     -- text
@@ -103,8 +94,8 @@ titleScreen time inputEvent = animatedTitleScreen
     
     title :: Picture
     title = translate (-309) 100
-            $ scale 0.5 0.5
-            $ text gameTitle
+          $ scale 0.5 0.5
+          $ text gameTitle
     
     subtitle :: Picture
     subtitle = translate (-290) 50

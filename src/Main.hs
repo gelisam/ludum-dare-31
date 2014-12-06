@@ -6,10 +6,12 @@ import Graphics.Gloss
 import Graphics.Gloss.Interface.FRP.ReactiveBanana
 import Reactive.Banana
 import Reactive.Banana.Frameworks
+import Text.Printf
 
 import Animation
 import Graphics
 import Input
+import Popup
 import Reactive.Banana.Animation
 import TitleScreen
 import Types
@@ -46,6 +48,25 @@ mainBanana time inputEvent = return picture
     goalEvent = () <$ filterE (== Goal) newTile
     
     
+    -- level changes
+    
+    nextLevel :: Event t LevelNumber
+    nextLevel = (+1) <$> levelNumber <@ goalEvent
+    
+    prevLevel :: Event t LevelNumber
+    prevLevel = subtract 1 <$> levelNumber <@ startEvent
+    
+    
+    -- popup stuff
+    
+    animatedTitleScreen :: Animated t Picture
+    animatedTitleScreen = titleScreen time inputEvent
+    
+    animatedLevelPopup :: Animated t Picture
+    animatedLevelPopup = animateB time blank
+                       $ levelPopupAnimation <$> nextLevel
+    
+    
     -- animation stuff
     
     playerMovement :: Event t (Animation ScreenPos)
@@ -66,21 +87,22 @@ mainBanana time inputEvent = return picture
     animationInProgress :: Behavior t Bool
     animationInProgress = or <$> sequenceA [ isAnimating animatedPlayer
                                            , isAnimating animatedTitleScreen
+                                           , isAnimating animatedLevelPopup
                                            ]
     
     
     -- debug stuff
     
     debugEvent :: Event t String
-    debugEvent = ("next level" <$ goalEvent)
-         `union` ("prev level" <$ startEvent)
+    debugEvent = (printf "next level: %d" <$> nextLevel)
+         `union` (printf "prev level: %d" <$> prevLevel)
     
     
     -- construct the game state for this frame
     
     levelNumber :: Behavior t LevelNumber
-    levelNumber = accumB 0 $ ((+ 1) <$ goalEvent)
-                     `union` (subtract 1 <$ startEvent)
+    levelNumber = stepper 0 $ prevLevel
+                      `union` nextLevel
     
     stage :: Behavior t Stage
     stage = pure initialStage
@@ -108,12 +130,10 @@ mainBanana time inputEvent = return picture
     
     -- this frame's graphics
     
-    animatedTitleScreen :: Animated t Picture
-    animatedTitleScreen = titleScreen time inputEvent
-    
     picture :: Behavior t Picture
     picture = pictures <$> sequenceA [ renderGameState <$> gameState
                                      , animatedValue animatedTitleScreen
+                                     , animatedValue animatedLevelPopup
                                      ]
 
 main :: IO ()

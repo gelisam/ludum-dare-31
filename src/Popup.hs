@@ -1,10 +1,75 @@
 module Popup where
 
+import Data.Monoid
 import Control.Applicative
 import Graphics.Gloss
+import Text.Printf
 
 import Animation
 
+
+fadeDuration :: Float
+fadeDuration = 0.75
+
+whiteFadeOutDuration :: Float
+whiteFadeOutDuration = 2
+
+
+fadeInAnimation :: Animation Float
+fadeInAnimation = interpolate fadeDuration 0 1
+
+fadeOutAnimation :: Animation Float
+fadeOutAnimation = interpolate whiteFadeOutDuration 1 0
+
+
+-- level popup (fade in, fade out)
+
+staticLevelPopup :: Int -> Picture
+staticLevelPopup n = staticWhiteFilter <> levelTitle n
+
+levelPopupAnimation :: Int -> Animation Picture
+levelPopupAnimation n = mappend <$> whitePopupAnimation
+                                <*> levelTitleAnimation n
+
+
+-- white filter
+
+staticWhiteFilter :: Picture
+staticWhiteFilter = makeWhiteFilter 1
+
+makeWhiteFilter :: Float -> Picture
+makeWhiteFilter alpha = color white' (rectangleSolid 640 480)
+  where
+    white' :: Color
+    white' = makeColor 1 1 1 (0.9 * alpha)
+
+whiteFadeInAnimation :: Animation Picture
+whiteFadeInAnimation = makeWhiteFilter <$> fadeInAnimation
+
+whiteFadeOutAnimation :: Animation Picture
+whiteFadeOutAnimation = makeWhiteFilter <$> fadeOutAnimation
+
+whitePopupAnimation :: Animation Picture
+whitePopupAnimation = whiteFadeInAnimation <> whiteFadeOutAnimation
+
+
+-- text
+
+levelTitle :: Int -> Picture
+levelTitle = translate (-125) 100
+           . scale 0.5 0.5
+           . text
+           . printf "Level %d"
+
+levelTitleAnimation :: Int -> Animation Picture
+levelTitleAnimation n = decelerate (rotateIntoView title)
+                     <> accelerate (rotateAway title)
+                     <> static blank
+  where
+    title = levelTitle n
+
+
+-- rotate into and out of view
 
 -- -1 <= t <= 1
 rotatePopup :: Float -> Picture -> Picture
@@ -19,13 +84,10 @@ rotatePopup t = translate 0 (-offset)
     angle = animationValue awayAngle (interpolate 1 0 awayAngle) t
     factor = animationValue awayFactor (interpolate 1 1 awayFactor) t
 
-rotateDuration :: Float
-rotateDuration = 0.75
-
 rotateIntoView :: Picture -> Animation Picture
-rotateIntoView p = rotatePopup <$> interpolate rotateDuration (-1) 0
+rotateIntoView p = rotatePopup <$> interpolate fadeDuration (-1) 0
                                <*> pure p
 
 rotateAway :: Picture -> Animation Picture
-rotateAway p = rotatePopup <$> interpolate rotateDuration 0 1
+rotateAway p = rotatePopup <$> interpolate fadeDuration 0 1
                            <*> pure p
