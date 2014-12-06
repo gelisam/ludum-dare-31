@@ -17,7 +17,7 @@ mainBanana :: forall t. Frameworks t
            => Event t Float
            -> Event t InputEvent
            -> Moment t (Behavior t Picture)
-mainBanana _ inputEvent = return picture
+mainBanana timeDeltaEvent inputEvent = return picture
   where
     dirEvent :: Event t (V Int)
     dirEvent = filterJust $ keydown2dir <$> inputEvent
@@ -33,6 +33,14 @@ mainBanana _ inputEvent = return picture
     
     goalEvent :: Event t ()
     goalEvent = const () <$> filterE (== Goal) newTile
+    
+    
+    time :: Behavior t Float
+    time = accumB 0 $ (+) <$> timeDeltaEvent
+    
+    playerAnimation :: Behavior t (Animation ScreenPos)
+    playerAnimation = pure (interpolate 1 (fmap fromIntegral goalPosition)
+                                          (fmap fromIntegral startPosition))
     
     
     debugEvent :: Event t String
@@ -51,7 +59,8 @@ mainBanana _ inputEvent = return picture
     playerTilePos = accumB startPosition $ (+) <$> dirEvent
     
     playerScreenPos :: Behavior t ScreenPos
-    playerScreenPos = fmap fromIntegral <$> playerTilePos
+    --playerScreenPos = fmap fromIntegral <$> playerTilePos
+    playerScreenPos = snapshot <$> playerAnimation <*> time
     
     accumulatedChanges :: Behavior t [LevelChanges]
     accumulatedChanges = pure []
@@ -73,5 +82,5 @@ mainBanana _ inputEvent = return picture
 main :: IO ()
 main = playBanana (InWindow "Ludum Dare 31" (640, 480) (800, 50))
                   white
-                  0
+                  60
                   mainBanana
