@@ -51,6 +51,9 @@ playerPicture = circle 10
              <> rotate 90 (letterPicture ":)")
 
 lockedDoorPicture :: Picture
-lockedDoorPicture = circle 10
-                 <> rotate (-90) (letterPicture "D")
+lockedDoorPicture = unlockedDoorPicture
                  <> rotate (-90) (letterPicture "-")
+
+unlockedDoorPicture :: Picture
+unlockedDoorPicture = circle 10
+                   <> rotate (-90) (letterPicture "D")
