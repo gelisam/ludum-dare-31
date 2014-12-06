@@ -20,5 +20,5 @@ mainBanana _ _ = return
 main :: IO ()
 main = playBanana (InWindow "Ludum Dare 31" (640, 480) (800, 50))
                   white
-                  60
+                  0
                   mainBanana
