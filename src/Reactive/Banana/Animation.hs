@@ -34,7 +34,7 @@ animateB time x0 startAnim = Animated currentValue isCurrentAnimationInProgress
                                                          <*> localTime
     
     idleValue :: Behavior t a
-    idleValue = accumB x0 $ const . lastFrame <$> startAnim
+    idleValue = stepper x0 $ lastFrame <$> startAnim
     
     lastFrame :: Animation a -> a
     lastFrame anim | isInfinite d = undefined  -- we won't have to hold the last frame
@@ -43,10 +43,10 @@ animateB time x0 startAnim = Animated currentValue isCurrentAnimationInProgress
         d = duration anim
     
     currentAnimation :: Behavior t (Animation a)
-    currentAnimation = accumB mempty $ const <$> startAnim
+    currentAnimation = stepper mempty startAnim
     
     startTime :: Behavior t Float
-    startTime = accumB 0 $ const <$> time <@ startAnim
+    startTime = stepper 0 $ time <@ startAnim
     
     localTime :: Behavior t Float
     localTime = (-) <$> time <*> startTime

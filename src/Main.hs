@@ -40,10 +40,10 @@ mainBanana time inputEvent = return picture
     -- consequences of player movement
     
     startEvent :: Event t ()
-    startEvent = const () <$> filterE (== Start) newTile
+    startEvent = () <$ filterE (== Start) newTile
     
     goalEvent :: Event t ()
-    goalEvent = const () <$> filterE (== Goal) newTile
+    goalEvent = () <$ filterE (== Goal) newTile
     
     
     -- animation stuff
@@ -72,15 +72,15 @@ mainBanana time inputEvent = return picture
     -- debug stuff
     
     debugEvent :: Event t String
-    debugEvent = (const "next level" <$> goalEvent)
-         `union` (const "prev level" <$> startEvent)
+    debugEvent = ("next level" <$ goalEvent)
+         `union` ("prev level" <$ startEvent)
     
     
     -- construct the game state for this frame
     
     levelNumber :: Behavior t LevelNumber
-    levelNumber = accumB 0 $ (const (+ 1) <$> goalEvent)
-                     `union` (const (subtract 1) <$> startEvent)
+    levelNumber = accumB 0 $ ((+ 1) <$ goalEvent)
+                     `union` (subtract 1 <$ startEvent)
     
     stage :: Behavior t Stage
     stage = pure initialStage

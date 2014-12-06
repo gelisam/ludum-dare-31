@@ -29,7 +29,7 @@ titleScreen time inputEvent = animatedTitleScreen
     anyKeyEvent = whenE isTitleScreenUp $ keydownEvent inputEvent
     
     isTitleScreenUp :: Behavior t Bool
-    isTitleScreenUp = stepper True $ const False <$> anyKeyEvent
+    isTitleScreenUp = stepper True $ False <$ anyKeyEvent
     
     
     -- combine white filter + text
@@ -68,7 +68,7 @@ titleScreen time inputEvent = animatedTitleScreen
     
     fadingWhiteFilter :: Animated t Picture
     fadingWhiteFilter = animateB time staticWhiteFilter
-                      $ const whiteFilterAnimation <$> anyKeyEvent
+                      $ whiteFilterAnimation <$ anyKeyEvent
       where
         whiteFilterAnimation :: Animation Picture
         whiteFilterAnimation = makeWhiteFilter <$> fadeOut
@@ -90,7 +90,7 @@ titleScreen time inputEvent = animatedTitleScreen
     
     fadingText :: Animated t Picture
     fadingText = animateB time staticText
-               $ const (rotateAway staticText) <$> anyKeyEvent
+               $ rotateAway staticText <$ anyKeyEvent
     
     blinkingText :: Behavior t Picture
     blinkingText = (commonText <>) <$> blinkingMessage
