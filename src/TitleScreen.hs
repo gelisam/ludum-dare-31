@@ -34,9 +34,6 @@ titleScreen time inputEvent = animatedTitleScreen
     
     -- combine white filter + text
     
-    staticTitleScreen :: Picture
-    staticTitleScreen = staticWhiteFilter <> staticText
-    
     fadingTitleScreen :: Animated t Picture
     fadingTitleScreen = mappend <$> fadingWhiteFilter
                                 <*> fadingText
@@ -45,7 +42,7 @@ titleScreen time inputEvent = animatedTitleScreen
     -- blink while not fading
     
     blinkingTitleScreen :: Behavior t Picture
-    blinkingTitleScreen = (staticWhiteFilter <>) <$> blinkingText
+    blinkingTitleScreen = mappend staticWhiteFilter <$> blinkingText
     
     animatedBlinkingTitleScreen :: Animated t Picture
     animatedBlinkingTitleScreen = fadingTitleScreen { animatedValue = possiblyBlinking }
