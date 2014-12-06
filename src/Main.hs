@@ -132,7 +132,7 @@ mainBanana timeDeltaEvent inputEvent = return picture
             (dx, dy) = (20, 10)
         
         flickeringMessage :: Behavior t Picture
-        flickeringMessage = flickeringPicture <$> (animatedValue True (flickering 1) <$> time)
+        flickeringMessage = flickeringPicture <$> (animatedValue True (blinking 1 0.3) <$> time)
                                               <*> pure startMessage
         
         startMessage = translate (-250) (-100)

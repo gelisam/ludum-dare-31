@@ -166,13 +166,22 @@ interpolate targetDuration x0 xZ = matchDuration targetDuration
                                              1.0
 
 -- |
+-- >>> sampleAnimation $ blinking 1 2
+-- [True,False,False,True,False,False,True,False,False,True,False,False,True,False,False]
+-- >>> sampleAnimation $ blinking 2 3
+-- [True,True,False,False,False,True,True,False,False,False,True,True,False,False,False]
+blinking :: Float -> Float -> Animation Bool
+blinking visibleDuration invisibleDuration = arepeat $ idle visibleDuration True
+                                                    <> idle invisibleDuration False
+
+-- |
 -- >>> sampleAnimation $ flickering 1
 -- [False,True,False,True,False,True,False,True,False,True,False,True,False,True,False]
 -- >>> sampleAnimation $ flickering 2
 -- [False,False,True,True,False,False,True,True,False,False,True,True,False,False,True]
 flickering :: Float -> Animation Bool
-flickering flickerDuration = arepeat $ idle flickerDuration False
-                                    <> idle flickerDuration True
+flickering flickerDuration = skip flickerDuration
+                           $ blinking flickerDuration flickerDuration
 
 
 -- |
