@@ -45,3 +45,7 @@ startPicture = circle 10
 goalPicture :: Picture
 goalPicture = circle 10
            <> letterPicture "G"
+
+playerPicture :: Picture
+playerPicture = circle 10
+             <> rotate 90 (letterPicture ":)")
