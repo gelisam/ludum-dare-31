@@ -10,6 +10,7 @@ import Reactive.Banana.Frameworks
 
 import Animation
 import Graphics
+import Graphics.Gloss.Extra
 import Input
 import Types
 import Vec2d
@@ -106,8 +107,13 @@ mainBanana timeDeltaEvent inputEvent = return picture
     
     -- title screen
     
-    titleScreen :: Picture
-    titleScreen = pictures [whiteFilter, title, subtitle, startMessage]
+    titleScreen :: Behavior t Picture
+    titleScreen = pictures <$> sequenceA
+                [ pure whiteFilter
+                , pure title
+                , pure subtitle
+                , flickeringMessage
+                ]
       where
         title = translate (-309) 100
                 $ scale 0.5 0.5
@@ -125,20 +131,23 @@ mainBanana timeDeltaEvent inputEvent = return picture
             (x, y) = (650, 80)
             (dx, dy) = (20, 10)
         
+        flickeringMessage :: Behavior t Picture
+        flickeringMessage = flickeringPicture <$> (animatedValue True (flickering 1) <$> time)
+                                              <*> pure startMessage
+        
         startMessage = translate (-250) (-100)
                      $ scale 0.3 0.3
                      $ text "Press any key to begin!"
         
         whiteFilter = color (makeColor 1 1 1 0.9)
                     $ rectangleSolid 640 480
-
     
     
     -- this frame's graphics
     
     picture :: Behavior t Picture
     picture = pictures <$> sequenceA [ renderGameState <$> gameState
-                                     , pure titleScreen
+                                     , titleScreen
                                      ]
 
 main :: IO ()
