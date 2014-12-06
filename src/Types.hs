@@ -39,14 +39,17 @@ data GameState = GameState
   , gDebugMessages      :: [String]
   } deriving (Show, Eq)
 
-startPosition :: TilePos
-startPosition = 0
+startTilePos :: TilePos
+startTilePos = 0
 
-goalPosition :: TilePos
-goalPosition = 4
+goalTilePos :: TilePos
+goalTilePos = 4
 
-initialPlayerScreenPos :: ScreenPos
-initialPlayerScreenPos = fmap fromIntegral startPosition
+startScreenPos :: ScreenPos
+startScreenPos = fmap fromIntegral startTilePos
+
+goalScreenPos :: ScreenPos
+goalScreenPos = fmap fromIntegral goalTilePos
 
 initialStage :: [[Tile]]
 initialStage = [[Start, Floor, Floor, Floor, Floor]

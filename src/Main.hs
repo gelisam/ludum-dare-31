@@ -58,7 +58,7 @@ mainBanana time inputEvent = return picture
         newPos = fmap fromIntegral <$> newTilePos
     
     animatedPlayerScreenPos :: Animated t ScreenPos
-    animatedPlayerScreenPos = animateB time initialPlayerScreenPos playerMovement
+    animatedPlayerScreenPos = animateB time startScreenPos playerMovement
     
     animatedPlayer :: Animated t PlayerGraphics
     animatedPlayer = PlayerGraphics True <$> animatedPlayerScreenPos
@@ -86,7 +86,7 @@ mainBanana time inputEvent = return picture
     stage = pure initialStage
     
     playerTilePos :: Behavior t TilePos
-    playerTilePos = accumB startPosition $ (+) <$> dirEvent
+    playerTilePos = accumB startTilePos $ (+) <$> dirEvent
     
     playerGraphics :: Behavior t PlayerGraphics
     playerGraphics = animatedValue animatedPlayer
