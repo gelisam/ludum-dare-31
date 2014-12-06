@@ -20,6 +20,8 @@ mainBanana :: forall t. Frameworks t
            -> Moment t (Behavior t Picture)
 mainBanana timeDeltaEvent inputEvent = return picture
   where
+    -- player movement
+    
     canMove :: Behavior t Bool
     canMove = not <$> animationInProgress
     
@@ -32,12 +34,17 @@ mainBanana timeDeltaEvent inputEvent = return picture
     newTile :: Event t Tile
     newTile = filterJust $ atV <$> stage <@> newPos
     
+    
+    -- consequences of player movement
+    
     startEvent :: Event t ()
     startEvent = const () <$> filterE (== Start) newTile
     
     goalEvent :: Event t ()
     goalEvent = const () <$> filterE (== Goal) newTile
     
+    
+    -- animation stuff
     
     time :: Behavior t Float
     time = accumB 0 $ (+) <$> timeDeltaEvent
@@ -51,10 +58,14 @@ mainBanana timeDeltaEvent inputEvent = return picture
                                            ]
     
     
+    -- debug stuff
+    
     debugEvent :: Event t String
     debugEvent = (const "next level" <$> goalEvent)
          `union` (const "prev level" <$> startEvent)
     
+    
+    -- construct and render the game state for this frame
     
     levelNumber :: Behavior t LevelNumber
     levelNumber = accumB 0 $ (const (+ 1) <$> goalEvent)
