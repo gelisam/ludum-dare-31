@@ -37,11 +37,42 @@ instance Monoid (Animation a) where
         f t | t < d1    = snapshot anim1 t
             | otherwise = snapshot anim2 (t - d1)
 
+
+infinity :: Float
+infinity = 1.0 / 0.0
+    
+-- |
+-- >>> 4.5 `floatMod` 2.0
+-- 0.5
+-- >>> 4.75 `floatMod` 0.5
+-- 0.25
+-- >>> 4.75 `floatMod` 2.5
+-- 2.25
+floatMod :: Float -> Float -> Float
+floatMod x y = rem'
+  where
+    quot' :: Int
+    quot' = floor (x / y)
+    
+    rem' :: Float
+    rem' = x - fromIntegral quot' * y
+
+
 -- |
 -- >>> sampleAnimation $ mreplicate 3 anim
 -- ["foo","foo","bar","bar","foo","foo","bar","bar","foo","foo","bar","bar"]
 mreplicate :: Monoid m => Int -> m -> m
 mreplicate n = mconcat . replicate n
+
+-- |
+-- >>> sampleAnimation $ arepeat anim
+-- ["foo","foo","bar","bar","foo","foo","bar","bar","foo","foo","bar","bar","foo","foo","bar"]
+arepeat :: Animation a -> Animation a
+arepeat anim | isInfinite d = anim
+             | otherwise    = Animation go infinity
+  where
+    d = duration anim
+    go t = snapshot anim (t `floatMod` d)
 
 
 -- |
@@ -64,8 +95,6 @@ idle duration x = Animation (const x) duration
 -- ["foo","foo","foo","foo","foo","foo","foo","foo","foo","foo","foo","foo","foo","foo","foo"]
 static :: a -> Animation a
 static x = idle infinity x
-  where
-    infinity = 1.0 / 0.0
 
 
 -- |
@@ -143,7 +172,7 @@ interpolate targetDuration x0 xZ = matchDuration targetDuration
 -- [False,False,True,True]
 flickering :: Float -> Float -> Animation Bool
 flickering targetDuration flickerDuration = trim targetDuration
-                                          $ mreplicate (ceiling (targetDuration / flickerDuration / 2))
+                                          $ arepeat
                                           $ idle flickerDuration False <> idle flickerDuration True
 
 
