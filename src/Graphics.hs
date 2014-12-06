@@ -31,3 +31,13 @@ grid cellSizeX cellSizeY cells = traceShow (cellSizeV, dimV, totalSizeV, centerX
     cellSizeV = V cellSizeX cellSizeY
     totalSizeV = cellSizeV * dimV
     V centerX centerY = totalSizeV / 2
+
+
+letterPicture :: String -> Picture
+letterPicture s = translate (-5) (-5)
+                $ scale 0.12 0.12
+                $ text s
+
+startPicture :: Picture
+startPicture = circle 10
+            <> letterPicture "S"
