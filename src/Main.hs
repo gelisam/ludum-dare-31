@@ -64,7 +64,8 @@ mainBanana time inputEvent = return picture
     
     animatedLevelPopup :: Animated t Picture
     animatedLevelPopup = animateB time blank
-                       $ levelPopupAnimation <$> nextLevel
+                       $ (prevLevelPopupAnimation <$> prevLevel)
+                 `union` (nextLevelPopupAnimation <$> nextLevel)
     
     
     -- animation stuff

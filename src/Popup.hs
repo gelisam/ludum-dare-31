@@ -27,9 +27,13 @@ fadeOutAnimation = interpolate whiteFadeOutDuration 1 0
 staticLevelPopup :: Int -> Picture
 staticLevelPopup n = staticWhiteFilter <> levelTitle n
 
-levelPopupAnimation :: Int -> Animation Picture
-levelPopupAnimation n = mappend <$> whitePopupAnimation
-                                <*> levelTitleAnimation n
+prevLevelPopupAnimation :: Int -> Animation Picture
+prevLevelPopupAnimation n = mappend <$> whitePopupAnimation
+                                    <*> prevLevelTitleAnimation n
+
+nextLevelPopupAnimation :: Int -> Animation Picture
+nextLevelPopupAnimation n = mappend <$> whitePopupAnimation
+                                    <*> nextLevelTitleAnimation n
 
 
 -- white filter
@@ -64,9 +68,16 @@ levelTitle = translate (-125) 100
 levelTitleAnimation :: Int -> Animation Picture
 levelTitleAnimation n = decelerate (rotateIntoView title)
                      <> accelerate (rotateAway title)
-                     <> static blank
   where
     title = levelTitle n
+
+prevLevelTitleAnimation :: Int -> Animation Picture
+prevLevelTitleAnimation n = areverse (levelTitleAnimation n)
+                         <> static blank
+
+nextLevelTitleAnimation :: Int -> Animation Picture
+nextLevelTitleAnimation n = levelTitleAnimation n
+                         <> static blank
 
 
 -- rotate into and out of view

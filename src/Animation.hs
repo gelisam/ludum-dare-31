@@ -74,6 +74,18 @@ arepeat anim | isInfinite d = anim
     d = duration anim
     go t = snapshot anim (t `floatMod` d)
 
+-- |
+-- >>> sampleAnimation $ areverse anim
+-- ["bar","bar","bar","foo"]
+-- >>> sampleAnimation $ areverse (interpolate 5 0.0 1.0 :: Animation Float)
+-- [1.0,0.8,0.6,0.4,0.2]
+-- >>> sampleAnimation $ areverse (static "foo")
+-- ["foo","foo","foo","foo","foo","foo","foo","foo","foo","foo","foo","foo","foo","foo","foo"]
+areverse :: Animation a -> Animation a
+areverse (Animation {..}) = Animation go duration
+  where
+    go t = snapshot (duration - t)
+
 
 -- |
 -- >>> sampleAnimation ((,) <$> interpolate 10 0.0 10.0 <*> interpolate 5 0.0 1.0 :: Animation (Float,Float))
