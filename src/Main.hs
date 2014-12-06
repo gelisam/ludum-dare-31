@@ -6,6 +6,7 @@ import Graphics.Gloss.Interface.FRP.ReactiveBanana
 import Reactive.Banana
 import Reactive.Banana.Frameworks
 
+import Animation
 import Graphics
 import Input
 import Types
