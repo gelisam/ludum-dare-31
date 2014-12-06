@@ -1,6 +1,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 module Main where
 
+import Data.Monoid
 import Data.Traversable
 import Graphics.Gloss
 import Graphics.Gloss.Interface.FRP.ReactiveBanana
@@ -12,6 +13,10 @@ import Graphics
 import Input
 import Types
 import Vec2d
+
+
+gameTitle :: String
+gameTitle = "More of the Same"
 
 
 mainBanana :: forall t. Frameworks t
@@ -67,7 +72,7 @@ mainBanana timeDeltaEvent inputEvent = return picture
          `union` (const "prev level" <$> startEvent)
     
     
-    -- construct and render the game state for this frame
+    -- construct the game state for this frame
     
     levelNumber :: Behavior t LevelNumber
     levelNumber = accumB 0 $ (const (+ 1) <$> goalEvent)
@@ -98,11 +103,46 @@ mainBanana timeDeltaEvent inputEvent = return picture
                           <*> accumulatedChanges
                           <*> debugMessages
     
+    
+    -- title screen
+    
+    titleScreen :: Picture
+    titleScreen = pictures [whiteFilter, title, subtitle, startMessage]
+      where
+        title = translate (-309) 100
+                $ scale 0.5 0.5
+                $ text gameTitle
+        
+        subtitle = translate (-290) 50
+                 $ scale 0.2 0.2
+                 $ textWithAccent
+        
+        textWithAccent = text "Samuel Gelineau's entry for Ludum Dare 31"
+                      <> accent
+        
+        accent = line [(x, y), (x + dx, y + dy)]
+          where
+            (x, y) = (650, 80)
+            (dx, dy) = (20, 10)
+        
+        startMessage = translate (-250) (-100)
+                     $ scale 0.3 0.3
+                     $ text "Press any key to begin!"
+        
+        whiteFilter = color (makeColor 1 1 1 0.9)
+                    $ rectangleSolid 640 480
+
+    
+    
+    -- this frame's graphics
+    
     picture :: Behavior t Picture
-    picture = renderGameState <$> gameState
+    picture = pictures <$> sequenceA [ renderGameState <$> gameState
+                                     , pure titleScreen
+                                     ]
 
 main :: IO ()
-main = playBanana (InWindow "More of the Same" (640, 480) (800, 50))
+main = playBanana (InWindow gameTitle (640, 480) (800, 50))
                   white
                   60
                   mainBanana
