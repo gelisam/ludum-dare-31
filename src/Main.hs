@@ -1,6 +1,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 module Main where
 
+import Data.Monoid
 import Graphics.Gloss
 import Graphics.Gloss.Interface.FRP.ReactiveBanana
 import Reactive.Banana
@@ -21,14 +22,27 @@ mainBanana _ inputEvent = return picture
     dirEvent :: Event t (V Int)
     dirEvent = filterJust $ keydown2dir <$> inputEvent
     
+    newPos :: Event t Player
+    newPos = (+) <$> player <@> dirEvent
+    
+    newTile :: Event t Tile
+    newTile = filterJust $ atV <$> stage <@> newPos
+    
+    startEvent :: Event t ()
+    startEvent = const () <$> filterE (== Start) newTile
+    
+    goalEvent :: Event t ()
+    goalEvent = const () <$> filterE (== Goal) newTile
+    
     levelNumber :: Behavior t LevelNumber
-    levelNumber = pure 0
+    levelNumber = accumB 0 $ (const (+ 1) <$> goalEvent)
+                     `union` (const (subtract 1) <$> startEvent)
     
     stage :: Behavior t Stage
     stage = pure initialStage
     
     player :: Behavior t Player
-    player = accumB 0 ((+) <$> dirEvent)
+    player = accumB 0 $ (+) <$> dirEvent
     
     accumulatedChanges :: Behavior t [LevelChanges]
     accumulatedChanges = pure []

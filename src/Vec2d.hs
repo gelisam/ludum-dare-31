@@ -32,3 +32,13 @@ up    = V   0   1
 down  = V   0 (-1)
 left  = V (-1)  0
 right = V   1   0
+
+atL :: [a] -> Int -> Maybe a
+atL (x:_) 0 = Just x
+atL (_:xs) i | i > 0 = atL xs (i-1)
+atL _ _ = Nothing
+
+atV :: [[a]] -> V Int -> Maybe a
+atV xss (V x y) = do
+    xs <- xss `atL` y
+    xs `atL` x
