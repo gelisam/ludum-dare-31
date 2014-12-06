@@ -5,6 +5,8 @@ import Graphics.Gloss.Interface.FRP.ReactiveBanana
 import Reactive.Banana
 import Reactive.Banana.Frameworks
 
+import Vec2d
+
 
 mainBanana :: Frameworks t
            => Event t Float
