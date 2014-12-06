@@ -6,7 +6,6 @@ import Reactive.Banana
 import Reactive.Banana.Frameworks
 
 import Graphics
-import Sprites
 import Types
 
 
@@ -16,8 +15,7 @@ mainBanana :: Frameworks t
            -> Moment t (Behavior t Picture)
 mainBanana _ _ = return
                $ pure
-               $ pictureGrid 20 20
-               $ (fmap.fmap) tilePicture initialStage
+               $ renderGameState initialGameState
 
 main :: IO ()
 main = playBanana (InWindow "Ludum Dare 31" (640, 480) (800, 50))
