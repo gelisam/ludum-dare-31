@@ -57,3 +57,7 @@ lockedDoorPicture = unlockedDoorPicture
 unlockedDoorPicture :: Picture
 unlockedDoorPicture = circle 10
                    <> rotate (-90) (letterPicture "D")
+
+keyPicture :: Picture
+keyPicture = circle 10
+          <> letterPicture "K"
