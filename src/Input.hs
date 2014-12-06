@@ -2,6 +2,8 @@ module Input where
 
 import Graphics.Gloss.Interface.Pure.Game hiding (Event)
 import Graphics.Gloss.Interface.FRP.ReactiveBanana
+
+import Reactive.Banana
 import Vec2d
 
 
@@ -24,3 +26,16 @@ key2dir _ = Nothing
 keydown2dir :: Num a => InputEvent -> Maybe (V a)
 keydown2dir (EventKey k Down _ _) = key2dir k
 keydown2dir _ = Nothing
+
+
+keydownEvent :: Event t InputEvent -> Event t Key
+keydownEvent = filterJust . fmap go
+  where
+    go (EventKey k Down _ _) = Just k
+    go _ = Nothing
+
+keyupEvent :: Event t InputEvent -> Event t Key
+keyupEvent = filterJust . fmap go
+  where
+    go (EventKey k Up _ _) = Just k
+    go _ = Nothing
