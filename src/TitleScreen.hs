@@ -12,6 +12,7 @@ import Animation
 import Data.Bool.Extra
 import Graphics.Gloss.Extra
 import Input
+import InputBlocking
 import Popup
 import Reactive.Banana.Animation
 import Types
@@ -20,8 +21,8 @@ import Types
 titleScreen :: forall t. Frameworks t
             => Behavior t Float
             -> Event t InputEvent
-            -> Animated t Picture
-titleScreen time inputEvent = animatedTitleScreen
+            -> InputBlocking t Picture
+titleScreen time inputEvent = inputBlockingTitleScreen
   where
     -- keypress event
     
@@ -39,13 +40,15 @@ titleScreen time inputEvent = animatedTitleScreen
                                 <*> fadingText
     
     
-    -- blink while not fading
+    -- blink while not fading, block until disposed.
     
     blinkingTitleScreen :: Behavior t Picture
     blinkingTitleScreen = mappend staticWhiteFilter <$> blinkingText
     
-    animatedBlinkingTitleScreen :: Animated t Picture
-    animatedBlinkingTitleScreen = fadingTitleScreen { animatedValue = possiblyBlinking }
+    inputBlockingTitleScreen :: InputBlocking t Picture
+    inputBlockingTitleScreen = InputBlocking possiblyBlinking
+                                             isTitleScreenUp
+                                             (() <$ anyKeyEvent)
       where
         possiblyBlinking :: Behavior t Picture
         possiblyBlinking = if_then_else <$> shouldBlink
@@ -55,13 +58,6 @@ titleScreen time inputEvent = animatedTitleScreen
         shouldBlink :: Behavior t Bool
         shouldBlink = (&&) <$> isTitleScreenUp
                            <*> (not <$> isAnimating fadingTitleScreen)
-    
-    
-    -- Circumvent Animated's isAnimated invariant: make it True iff we're still waiting for the keypress.
-    -- This way the player can start moving immediately, and can't move during the blinking phase.
-    
-    animatedTitleScreen :: Animated t Picture
-    animatedTitleScreen = animatedBlinkingTitleScreen { isAnimating = isTitleScreenUp }
     
     
     -- white filter

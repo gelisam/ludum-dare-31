@@ -11,6 +11,7 @@ import Text.Printf
 import Animation
 import Graphics
 import Input
+import InputBlocking
 import Popup
 import Reactive.Banana.Animation
 import TitleScreen
@@ -27,7 +28,7 @@ mainBanana time inputEvent = return picture
     -- player movement
     
     canMove :: Behavior t Bool
-    canMove = not <$> animationInProgress
+    canMove = not <$> inputIsBlocked
     
     dirEvent :: Event t (V Int)
     dirEvent = whenE canMove $ filterJust $ keydown2dir <$> inputEvent
@@ -59,8 +60,8 @@ mainBanana time inputEvent = return picture
     
     -- popup stuff
     
-    animatedTitleScreen :: Animated t Picture
-    animatedTitleScreen = titleScreen time inputEvent
+    inputBlockingTitleScreen :: InputBlocking t Picture
+    inputBlockingTitleScreen = titleScreen time inputEvent
     
     animatedLevelPopup :: Animated t Picture
     animatedLevelPopup = animateB time blank
@@ -85,11 +86,11 @@ mainBanana time inputEvent = return picture
     animatedPlayer :: Animated t PlayerGraphics
     animatedPlayer = PlayerGraphics True <$> animatedPlayerScreenPos
     
-    animationInProgress :: Behavior t Bool
-    animationInProgress = or <$> sequenceA [ isAnimating animatedPlayer
-                                           , isAnimating animatedTitleScreen
-                                           , isAnimating animatedLevelPopup
-                                           ]
+    inputIsBlocked :: Behavior t Bool
+    inputIsBlocked = or <$> sequenceA [ isAnimating animatedPlayer
+                                      , isBlockingInput inputBlockingTitleScreen
+                                      , isAnimating animatedLevelPopup
+                                      ]
     
     
     -- debug stuff
@@ -133,7 +134,7 @@ mainBanana time inputEvent = return picture
     
     picture :: Behavior t Picture
     picture = pictures <$> sequenceA [ renderGameState <$> gameState
-                                     , animatedValue animatedTitleScreen
+                                     , inputBlockingValue inputBlockingTitleScreen
                                      , animatedValue animatedLevelPopup
                                      ]
 

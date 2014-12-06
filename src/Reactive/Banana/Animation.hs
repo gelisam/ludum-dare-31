@@ -13,9 +13,9 @@ data Animated t a = Animated
   } deriving Functor
 
 instance Applicative (Animated t) where
-  pure x = Animated (pure x) (pure False)
-  af <*> ax = Animated (animatedValue af <*> animatedValue ax)
-                       ((||) <$> isAnimating af <*> isAnimating ax)
+    pure x = Animated (pure x) (pure False)
+    af <*> ax = Animated (animatedValue af <*> animatedValue ax)
+                         ((||) <$> isAnimating af <*> isAnimating ax)
 
 animateB :: forall a t. Frameworks t
          => Behavior t Float
