@@ -10,6 +10,7 @@ import Reactive.Banana.Frameworks
 import Animation
 import Graphics
 import Input
+import Reactive.Banana.Animation
 import TitleScreen
 import Types
 import Vec2d
@@ -55,7 +56,7 @@ mainBanana time inputEvent = return picture
     
     animationInProgress :: Behavior t Bool
     animationInProgress = or <$> sequenceA [ isAnimationInProgress <$> playerAnimation <*> time
-                                           , isTitleScreenAnimating
+                                           , isAnimating <$> animatedTitleScreen
                                            ]
     
     
@@ -100,11 +101,12 @@ mainBanana time inputEvent = return picture
     
     -- this frame's graphics
     
-    (isTitleScreenAnimating, renderTitleScreen) = titleScreen time inputEvent
+    animatedTitleScreen :: Behavior t (Animated Picture)
+    animatedTitleScreen = titleScreen time inputEvent
     
     picture :: Behavior t Picture
     picture = pictures <$> sequenceA [ renderGameState <$> gameState
-                                     , renderTitleScreen
+                                     , animatedValue <$> animatedTitleScreen
                                      ]
 
 main :: IO ()

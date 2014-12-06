@@ -7,15 +7,28 @@ import Reactive.Banana.Frameworks
 import Animation
 
 
+data Animated a = Animated
+  { animatedValue :: a
+  , isAnimating :: Bool
+  } deriving (Show, Eq)
+
 animateB :: forall a t. Frameworks t
          => Behavior t Float
          -> a
          -> Event t (Animation a)
-         -> Behavior t a
-animateB time x0 startAnim = animationValue <$> idleValue
-                                            <*> currentAnimation
-                                            <*> localTime
+         -> Behavior t (Animated a)
+animateB time x0 startAnim = Animated <$> currentValue
+                                      <*> isCurrentAnimationInProgress
   where
+    currentValue :: Behavior t a
+    currentValue = animationValue <$> idleValue
+                                  <*> currentAnimation
+                                  <*> localTime
+    
+    isCurrentAnimationInProgress :: Behavior t Bool
+    isCurrentAnimationInProgress = isAnimationInProgress <$> currentAnimation
+                                                         <*> localTime
+    
     idleValue :: Behavior t a
     idleValue = accumB x0 $ const . lastFrame <$> startAnim
     
