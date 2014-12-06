@@ -8,7 +8,6 @@ import Reactive.Banana
 import Reactive.Banana.Frameworks
 
 import Animation
-import Reactive.Banana.Animation
 import Graphics
 import Input
 import TitleScreen

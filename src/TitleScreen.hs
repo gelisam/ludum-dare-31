@@ -5,12 +5,15 @@ import Data.Monoid
 import Data.Traversable
 import Graphics.Gloss
 import Graphics.Gloss.Interface.FRP.ReactiveBanana
+import Graphics.Gloss.Interface.Pure.Game hiding (Event)
 import Reactive.Banana
 import Reactive.Banana.Frameworks
 
 import Animation
 import Graphics.Gloss.Extra
+import Input
 import Popup
+import Reactive.Banana.Animation
 import Types
 
 
@@ -20,14 +23,17 @@ titleScreen :: forall t. Frameworks t
             -> (Behavior t Bool, Behavior t Picture)
 titleScreen time inputEvent = (isVisible, picture)
   where
-    alphaAnimation :: Animation Float
-    alphaAnimation = interpolate 0.75 1 0
+    fadeOut :: Animation Float
+    fadeOut = interpolate 0.75 1 0
+    
+    anyKeyEvent :: Event t Key
+    anyKeyEvent = whenE isVisible $ keydownEvent inputEvent
     
     alpha :: Behavior t Float
-    alpha = animatedValue 0 alphaAnimation <$> time
+    alpha = animateB time 1 $ const fadeOut <$> anyKeyEvent
     
     isVisible :: Behavior t Bool
-    isVisible = isAnimating alphaAnimation <$> time
+    isVisible = stepper True $ const False <$> anyKeyEvent
     
     picture :: Behavior t Picture
     picture = fadingTitleScreen
