@@ -15,38 +15,57 @@ import Types
 
 titleScreen :: forall t. Frameworks t
             => Behavior t Float
+            -> Behavior t Float
             -> Event t InputEvent
             -> Behavior t Picture
-titleScreen time inputEvent = pictures <$> sequenceA
-                            [ pure whiteFilter
-                            , pure title
-                            , pure subtitle
-                            , flickeringMessage
-                            ]
+titleScreen alpha time inputEvent = fadingTitleScreen
   where
-    title = translate (-309) 100
-            $ scale 0.5 0.5
-            $ text gameTitle
+    fadingTitleScreen :: Behavior t Picture
+    fadingTitleScreen = mappend <$> whiteFilter
+                                <*> movingText
     
-    subtitle = translate (-290) 50
-             $ scale 0.2 0.2
-             $ textWithAccent
-    
-    textWithAccent = text "Samuel Gelineau's entry for Ludum Dare 31"
-                  <> accent
-    
-    accent = line [(x, y), (x + dx, y + dy)]
+    whiteFilter :: Behavior t Picture
+    whiteFilter = color <$> white'
+                        <*> pure (rectangleSolid 640 480)
       where
-        (x, y) = (650, 80)
-        (dx, dy) = (20, 10)
+        white' :: Behavior t Color
+        white' = makeColor 1 1 1 <$> (0.9 *) <$> alpha
     
-    flickeringMessage :: Behavior t Picture
-    flickeringMessage = flickeringPicture <$> (animatedValue True (blinking 1 0.3) <$> time)
-                                          <*> pure startMessage
+    movingText :: Behavior t Picture
+    movingText = translate 0 <$> textOffset
+                             <*> (pictures <$> sequenceA textParts)
     
-    startMessage = translate (-250) (-100)
-                 $ scale 0.3 0.3
-                 $ text "Press any key to begin!"
+    textOffset :: Behavior t Float
+    textOffset = (480 *) . (1 -) <$> alpha
     
-    whiteFilter = color (makeColor 1 1 1 0.9)
-                $ rectangleSolid 640 480
+    textParts :: [Behavior t Picture]
+    textParts = [ pure title
+                , pure subtitle
+                , flickeringMessage
+                ]
+      where
+        title :: Picture
+        title = translate (-309) 100
+                $ scale 0.5 0.5
+                $ text gameTitle
+        
+        subtitle :: Picture
+        subtitle = translate (-290) 50
+                 $ scale 0.2 0.2
+                 $ text "Samuel Gelineau's entry for Ludum Dare 31"
+                <> accent
+          where
+            accent :: Picture
+            accent = line [(x, y), (x + dx, y + dy)]
+              where
+                (x, y) = (650, 80)
+                (dx, dy) = (20, 10)
+        
+        flickeringMessage :: Behavior t Picture
+        flickeringMessage = flickeringPicture <$> (animatedValue True (blinking 1 0.3) <$> time)
+                                              <*> pure message
+          where
+            message :: Picture
+            message = translate (-250) (-100)
+                         $ scale 0.3 0.3
+                         $ text "Press any key to begin!"
