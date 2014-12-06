@@ -39,6 +39,6 @@ pictureGrid dx dy cells = insideGrid dx dy cells
                       <$> cells
 
 
-flickeringPicture :: Bool -> Picture -> Picture
-flickeringPicture True = id
-flickeringPicture False = const blank
+guardPicture :: Bool -> Picture -> Picture
+guardPicture True = id
+guardPicture False = const blank

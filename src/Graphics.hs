@@ -30,7 +30,7 @@ atStagePos = atGridPos 20 20
 
 
 renderPlayer :: PlayerGraphics -> Picture
-renderPlayer (PlayerGraphics {..}) = flickeringPicture gPlayerVisible
+renderPlayer (PlayerGraphics {..}) = guardPicture gPlayerVisible
                                    $ atStagePos gPlayerScreenPos playerPicture
 
 
