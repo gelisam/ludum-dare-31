@@ -21,12 +21,16 @@ type LevelChanges = [(V Int, Tile)]
 type TilePos = V Int
 type ScreenPos = V Float
 
+data PlayerGraphics = PlayerGraphics
+  { gPlayerVisible      :: Bool
+  , gPlayerScreenPos    :: ScreenPos
+  } deriving (Show, Eq)
+
 data GameState = GameState
   { gLevelNumber        :: LevelNumber
   , gStage              :: Stage
   , gPlayerTilePos      :: TilePos
-  , gPlayerScreenPos    :: ScreenPos
-  , gPlayerVisible      :: Bool
+  , gPlayerGraphics     :: PlayerGraphics
   , gAccumulatedChanges :: [LevelChanges]
   , gDebugMessages      :: [String]
   } deriving (Show, Eq)

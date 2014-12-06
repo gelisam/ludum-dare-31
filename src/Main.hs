@@ -49,16 +49,14 @@ mainBanana timeDeltaEvent inputEvent = return picture
     time :: Behavior t Float
     time = accumB 0 $ (+) <$> timeDeltaEvent
     
-    playerAnimation :: Behavior t (Animation ScreenPos)
-    playerAnimation = pure (interpolate 1 (fmap fromIntegral goalPosition)
-                                          (fmap fromIntegral startPosition))
-    
-    playerAnimationFlicker :: Behavior t (Animation Bool)
-    playerAnimationFlicker = pure (flickering 1 0.1)
+    playerAnimation :: Behavior t (Animation PlayerGraphics)
+    playerAnimation = pure
+                    $ PlayerGraphics <$> flickering 0.1
+                                     <*> interpolate 1 (fmap fromIntegral goalPosition)
+                                                       (fmap fromIntegral startPosition)
     
     animationInProgress :: Behavior t Bool
     animationInProgress = or <$> sequenceA [ isAnimating <$> playerAnimation <*> time
-                                           , isAnimating <$> playerAnimationFlicker <*> time
                                            ]
     
     
@@ -81,13 +79,10 @@ mainBanana timeDeltaEvent inputEvent = return picture
     playerTilePos :: Behavior t TilePos
     playerTilePos = accumB startPosition $ (+) <$> dirEvent
     
-    playerScreenPos :: Behavior t ScreenPos
-    playerScreenPos = animatedValue <$> (fmap fromIntegral <$> playerTilePos)
-                                    <*> playerAnimation
-                                    <*> time
-    
-    playerVisible :: Behavior t Bool
-    playerVisible = animatedValue True <$> playerAnimationFlicker <*> time
+    playerGraphics :: Behavior t PlayerGraphics
+    playerGraphics = animatedValue <$> (PlayerGraphics True <$> fmap fromIntegral <$> playerTilePos)
+                                   <*> playerAnimation
+                                   <*> time
     
     accumulatedChanges :: Behavior t [LevelChanges]
     accumulatedChanges = pure []
@@ -99,8 +94,7 @@ mainBanana timeDeltaEvent inputEvent = return picture
     gameState = GameState <$> levelNumber
                           <*> stage
                           <*> playerTilePos
-                          <*> playerScreenPos
-                          <*> playerVisible
+                          <*> playerGraphics
                           <*> accumulatedChanges
                           <*> debugMessages
     
