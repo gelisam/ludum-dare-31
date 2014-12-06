@@ -20,10 +20,11 @@ import Vec2d
 
 
 mainBanana :: forall t. Frameworks t
-           => Behavior t Float
+           => Event t ()
+           -> Behavior t Float
            -> Event t InputEvent
            -> Moment t (Behavior t Picture)
-mainBanana time inputEvent = return picture
+mainBanana tickEvent time inputEvent = return picture
   where
     -- player movement
     
