@@ -1,6 +1,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 module Main where
 
+import Data.Traversable
 import Graphics.Gloss
 import Graphics.Gloss.Interface.FRP.ReactiveBanana
 import Reactive.Banana
@@ -46,7 +47,8 @@ mainBanana timeDeltaEvent inputEvent = return picture
                                           (fmap fromIntegral startPosition))
     
     animationInProgress :: Behavior t Bool
-    animationInProgress = isAnimating <$> playerAnimation <*> time
+    animationInProgress = or <$> sequenceA [ isAnimating <$> playerAnimation <*> time
+                                           ]
     
     
     debugEvent :: Event t String
