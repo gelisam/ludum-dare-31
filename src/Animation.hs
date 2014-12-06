@@ -152,3 +152,11 @@ decelerate anim = anim'''
     anim' = matchDuration 1.0 anim
     anim'' = Animation (\t -> snapshot anim' (sqrt t)) 1.0
     anim''' = matchDuration (duration anim) anim''
+
+
+isAnimating :: Animation a -> Float -> Bool
+isAnimating anim t = t < duration anim
+
+animatedValue :: a -> Animation a -> Float -> a
+animatedValue idleValue anim t | isAnimating anim t = snapshot anim t
+                               | otherwise          = idleValue

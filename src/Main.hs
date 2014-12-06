@@ -59,8 +59,9 @@ mainBanana timeDeltaEvent inputEvent = return picture
     playerTilePos = accumB startPosition $ (+) <$> dirEvent
     
     playerScreenPos :: Behavior t ScreenPos
-    --playerScreenPos = fmap fromIntegral <$> playerTilePos
-    playerScreenPos = snapshot <$> playerAnimation <*> time
+    playerScreenPos = animatedValue <$> (fmap fromIntegral <$> playerTilePos)
+                                    <*> playerAnimation
+                                    <*> time
     
     accumulatedChanges :: Behavior t [LevelChanges]
     accumulatedChanges = pure []
