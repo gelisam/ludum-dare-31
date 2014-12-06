@@ -12,5 +12,8 @@ executable ludum-dare31
   -- other-modules:       
   -- other-extensions:    
   build-depends:       base >=4.7 && <4.8
+                     , gloss
+                     , gloss-banana
+                     , reactive-banana
   hs-source-dirs:      src
   default-language:    Haskell2010
