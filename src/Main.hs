@@ -102,7 +102,7 @@ mainBanana timeDeltaEvent inputEvent = return picture
     picture = renderGameState <$> gameState
 
 main :: IO ()
-main = playBanana (InWindow "Ludum Dare 31" (640, 480) (800, 50))
+main = playBanana (InWindow "More of the Same" (640, 480) (800, 50))
                   white
                   60
                   mainBanana
