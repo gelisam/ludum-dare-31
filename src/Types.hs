@@ -21,10 +21,10 @@ type LevelChanges = [(V Int, Tile)]
 type Player = V Int
 
 data GameState = GameState
-  { levelNumber :: LevelNumber
-  , stage :: Stage
-  , player :: Player
-  , accumulatedChanges :: [LevelChanges]
+  { gLevelNumber :: LevelNumber
+  , gStage :: Stage
+  , gPlayer :: Player
+  , gAccumulatedChanges :: [LevelChanges]
   } deriving (Show, Eq)
 
 initialStage = [[Start, Floor, Floor, Floor, Floor]

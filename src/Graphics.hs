@@ -33,6 +33,6 @@ renderPlayer :: Player -> Picture
 renderPlayer pos = atStagePos pos playerPicture
 
 renderGameState :: GameState -> Picture
-renderGameState (GameState {..}) = renderHUD levelNumber
-                                <> renderStage stage
-                                <> insideStage stage (renderPlayer player)
+renderGameState (GameState {..}) = renderHUD gLevelNumber
+                                <> renderStage gStage
+                                <> insideStage gStage (renderPlayer gPlayer)
