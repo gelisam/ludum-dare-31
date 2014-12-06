@@ -34,10 +34,14 @@ grid cellSizeX cellSizeY cells = traceShow (cellSizeV, dimV, totalSizeV, centerX
 
 
 letterPicture :: String -> Picture
-letterPicture s = translate (-5) (-5)
+letterPicture s = translate (-5) (-6)
                 $ scale 0.12 0.12
                 $ text s
 
 startPicture :: Picture
 startPicture = circle 10
             <> letterPicture "S"
+
+goalPicture :: Picture
+goalPicture = circle 10
+           <> letterPicture "G"

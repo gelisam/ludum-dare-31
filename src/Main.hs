@@ -10,7 +10,7 @@ import Vec2d
 
 
 emptyStage :: [[Picture]]
-emptyStage = replicate 10 (replicate 10 startPicture)
+emptyStage = replicate 10 (replicate 10 goalPicture)
 
 mainBanana :: Frameworks t
            => Event t Float
