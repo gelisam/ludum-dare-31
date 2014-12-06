@@ -20,7 +20,7 @@ playBanana ∷ Display -- ^ The display method
            → Color   -- ^ The background colour
            → Int     -- ^ The refresh rate, in Hertz
            → (∀ t. Frameworks t
-              ⇒ Event t Float
+              ⇒ Behavior t Float
               → Event t InputEvent
               → Moment t (Behavior t Picture))
            -- ^ A Moment t action to generate the Picture Behavior, taking
@@ -44,7 +44,7 @@ playBanana display colour frequency mPicture = do
     makeNetwork tickHandler eventHandler change = do
       eTick  ← fromAddHandler tickHandler
       eEvent ← fromAddHandler eventHandler
-      bRawPicture ← mPicture eTick eEvent
+      bRawPicture ← mPicture (accumB 0 $ (+) <$> eTick) eEvent
       
       -- make sure the Behavior doesn't leak memory if mPicture ignores
       -- one or both kind of events

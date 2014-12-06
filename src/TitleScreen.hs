@@ -4,20 +4,25 @@ module TitleScreen where
 import Data.Monoid
 import Data.Traversable
 import Graphics.Gloss
+import Graphics.Gloss.Interface.FRP.ReactiveBanana
 import Reactive.Banana
+import Reactive.Banana.Frameworks
 
 import Animation
 import Graphics.Gloss.Extra
 import Types
 
 
-titleScreen :: forall t. Behavior t Float -> Behavior t Picture
-titleScreen time = pictures <$> sequenceA
-                 [ pure whiteFilter
-                 , pure title
-                 , pure subtitle
-                 , flickeringMessage
-                 ]
+titleScreen :: forall t. Frameworks t
+            => Behavior t Float
+            -> Event t InputEvent
+            -> Behavior t Picture
+titleScreen time inputEvent = pictures <$> sequenceA
+                            [ pure whiteFilter
+                            , pure title
+                            , pure subtitle
+                            , flickeringMessage
+                            ]
   where
     title = translate (-309) 100
             $ scale 0.5 0.5

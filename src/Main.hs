@@ -16,10 +16,10 @@ import Vec2d
 
 
 mainBanana :: forall t. Frameworks t
-           => Event t Float
+           => Behavior t Float
            -> Event t InputEvent
            -> Moment t (Behavior t Picture)
-mainBanana timeDeltaEvent inputEvent = return picture
+mainBanana time inputEvent = return picture
   where
     -- player movement
     
@@ -46,9 +46,6 @@ mainBanana timeDeltaEvent inputEvent = return picture
     
     
     -- animation stuff
-    
-    time :: Behavior t Float
-    time = accumB 0 $ (+) <$> timeDeltaEvent
     
     playerAnimation :: Behavior t (Animation PlayerGraphics)
     playerAnimation = pure
@@ -104,7 +101,7 @@ mainBanana timeDeltaEvent inputEvent = return picture
     
     picture :: Behavior t Picture
     picture = pictures <$> sequenceA [ renderGameState <$> gameState
-                                     , titleScreen time
+                                     , titleScreen time inputEvent
                                      ]
 
 main :: IO ()
