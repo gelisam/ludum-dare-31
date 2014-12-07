@@ -15,6 +15,6 @@ Let's begin with that:
 
 1. get to the exit
 1. some optional locked door appear
-1  a key appears
+1. a key appears
 1. a second optional locked door appears
 1. both doors become mandatory
