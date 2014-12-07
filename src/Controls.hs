@@ -1,7 +1,6 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 module Controls where
 
-import Control.Monad
 import Graphics.Gloss.Interface.FRP.ReactiveBanana
 import Reactive.Banana
 import Reactive.Banana.Frameworks
@@ -10,10 +9,30 @@ import Input
 import Vec2d
 
 
+type Dir2 = Int
+type Dir4 = V Int
+type Dir8 = V Int
+
+forceDir2 :: Int -> Dir2
+forceDir2 x | x < 0     = (-1)
+            | x > 0     = 1
+            | otherwise = 0
+
+forceDir4 :: Bool -> V Int -> Dir4
+forceDir4 favorVertical v | (x == 0 || y == 0) = V x y
+                          | favorVertical      = V 0 y
+                          | otherwise          = V x 0
+  where
+    V x y = forceDir8 v
+
+forceDir8 :: V Int -> Dir8
+forceDir8 (V x y) = V (forceDir2 x) (forceDir2 y)
+
+
 directionalInput :: forall t. Frameworks t
                  => Event t ()
                  -> Event t InputEvent
-                 -> Event t (V Int)
+                 -> Event t Dir4
 directionalInput checkForInput inputEvent = dirEvent
   where
     dirChange :: Event t (V Int -> V Int)
@@ -29,17 +48,9 @@ directionalInput checkForInput inputEvent = dirEvent
     dirEvent :: Event t (V Int)
     dirEvent = filterJust
              $ validateV
+           <$> forceDir4 True
            <$> newDir
        `union` (totalDir <@ checkForInput)
       where
-        validateV :: V Int -> Maybe (V Int)
-        validateV (V x y) = do
-            V x' y' <- V <$> validateInt x <*> validateInt y
-            guard (x' == 0 || y' == 0)
-            guard (x' /= 0 || y' /= 0)
-            return (V x' y')
-        
-        validateInt :: Int -> Maybe Int
-        validateInt x | x < 0     = Just (-1)
-                      | x > 0     = Just 1
-                      | otherwise = Just 0
+        validateV 0 = Nothing
+        validateV x = Just x 
