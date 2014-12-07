@@ -77,19 +77,22 @@ initialStage = listArray (0, maxIndex)
                 ,[Empty, Wall , Wall , Wall , Wall , Wall, Empty]]  -- 0
             --     0      1      2      3      4      5     6
 
-levelData :: [LevelChanges]
-levelData = (fmap.fmap) padData smallLevelData
+levelData :: [LevelDescription]
+levelData = padData <$> smallLevelData
   where
-    smallLevelData = [[(V 3 2, Wall)]
-                     ,[(V 3 1, LockedDoor)]
-                     ,[(V 3 4, Key 0)]
-                     ,[(V 2 1, LockedDoor)]
-                     ,[(V 4 2, Wall)]
-                     ,[(V 5 1, Floor), (V 6 1, Empty)]
+    smallLevelData = [ LevelDescription [(V 3 2, Wall)]                  "A new wall appears!"   "(the wall disappears silently)"
+                     , LevelDescription [(V 3 1, LockedDoor)]            "A new door appears!"   "(the door disappears silently)"
+                     , LevelDescription [(V 3 4, Key 0)]                 "A key appears!"        "(the key disappears silently)"
+                     , LevelDescription [(V 2 1, LockedDoor)]            "Another door appears!" "(the door disappears silently)"
+                     , LevelDescription [(V 4 2, Wall)]                  "Another wall appears!" "(yes, better keep exploring)"
+                     , LevelDescription [(V 5 1, Floor), (V 6 1, Empty)] "New horizons"          ""
                      ]
     
-    padData :: LevelChange -> LevelChange
-    padData (tilePos, tile) = (padTilePos tilePos, tile)
+    padData :: LevelDescription -> LevelDescription
+    padData level = level { lLevelChanges = fmap padChange (lLevelChanges level) }
+    
+    padChange :: LevelChange -> LevelChange
+    padChange (tilePos, tile) = (padTilePos tilePos, tile)
 
 lastLevel :: LevelNumber
 lastLevel = length levelData

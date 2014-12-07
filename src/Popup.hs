@@ -8,10 +8,15 @@ import Text.Printf
 import Animation
 import Graphics.Gloss.Extra
 import InputBlocking
+import LevelData
+import Types
 
 
 fadeDuration :: Float
 fadeDuration = 0.75
+
+idleDuration :: Float
+idleDuration = 0.75
 
 whiteFadeOutDuration :: Float
 whiteFadeOutDuration = 2
@@ -29,16 +34,16 @@ fadeOutAnimation = inputAllowingAnimation $ interpolate whiteFadeOutDuration whi
 
 -- level popup (fade in, fade out)
 
-staticLevelPopup :: Int -> Picture
-staticLevelPopup n = staticWhiteFilter <> levelTitle n
+staticLevelPopup :: Bool -> Int -> Picture
+staticLevelPopup direction n = staticWhiteFilter <> levelText direction n
 
 prevLevelPopupAnimation :: Int -> InputBlockingAnimation Picture
 prevLevelPopupAnimation n = mappend <$> whitePopupAnimation
-                                    <*> inputAllowingAnimation (prevLevelTitleAnimation n)
+                                    <*> inputAllowingAnimation (prevLevelTextAnimation n)
 
 nextLevelPopupAnimation :: Int -> InputBlockingAnimation Picture
 nextLevelPopupAnimation n = mappend <$> whitePopupAnimation
-                                    <*> inputAllowingAnimation (nextLevelTitleAnimation n)
+                                    <*> inputAllowingAnimation (nextLevelTextAnimation n)
 
 
 -- white filter
@@ -58,8 +63,15 @@ whiteFadeInAnimation = makeWhiteFilter <$> fadeInAnimation
 whiteFadeOutAnimation :: InputBlockingAnimation Picture
 whiteFadeOutAnimation = makeWhiteFilter <$> fadeOutAnimation
 
+whiteIdleAnimation :: InputBlockingAnimation Picture
+whiteIdleAnimation = inputBlockingAnimation
+                       $ idle idleDuration
+                       $ makeWhiteFilter whiteOpacity
+
 whitePopupAnimation :: InputBlockingAnimation Picture
-whitePopupAnimation = whiteFadeInAnimation <> whiteFadeOutAnimation
+whitePopupAnimation = whiteFadeInAnimation
+                   <> whiteIdleAnimation
+                   <> whiteFadeOutAnimation
 
 
 -- text
@@ -70,19 +82,36 @@ levelTitle = translate (-125) 100
            . blackText
            . printf "Level %d"
 
-levelTitleAnimation :: Int -> Animation Picture
-levelTitleAnimation n = decelerate (rotateIntoView title)
-                     <> accelerate (rotateAway title)
+levelSubtitle :: Bool -> Int -> Picture
+levelSubtitle direction = translate (-125) 0
+                        . uscale (scale' direction)
+                        . blackText
+                        . subtitle direction
   where
-    title = levelTitle n
+    scale' True  = 0.3
+    scale' False = 0.2
+    
+    subtitle True  n = lForwardMessage (levelData !! (n - 1))
+    subtitle False n = lBackwardMessage (levelData !! n)
 
-prevLevelTitleAnimation :: Int -> Animation Picture
-prevLevelTitleAnimation n = areverse (levelTitleAnimation n)
-                         <> static blank
+levelText :: Bool -> Int -> Picture
+levelText direction n = levelTitle n <> levelSubtitle direction n
 
-nextLevelTitleAnimation :: Int -> Animation Picture
-nextLevelTitleAnimation n = levelTitleAnimation n
-                         <> static blank
+
+levelTextAnimation :: Bool -> Int -> Animation Picture
+levelTextAnimation direction n = decelerate (rotateIntoView t)
+                              <> idle idleDuration t
+                              <> accelerate (rotateAway t)
+  where
+    t = levelText direction n
+
+prevLevelTextAnimation :: Int -> Animation Picture
+prevLevelTextAnimation n = areverse (levelTextAnimation False n)
+                        <> static blank
+
+nextLevelTextAnimation :: Int -> Animation Picture
+nextLevelTextAnimation n = levelTextAnimation True n
+                        <> static blank
 
 
 -- rotate into and out of view

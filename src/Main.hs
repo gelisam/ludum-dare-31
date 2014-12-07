@@ -95,7 +95,7 @@ mainBanana sprites tick time inputEvent = return picture
     
     nextLevelChanges :: Behavior t (Bool, LevelChanges)
     nextLevelChanges = stepper (error "nextLevelChanges")
-                             $ ((True,) <$> (levelData !!) <$> levelNumber <@ nextLevel)
+                             $ ((True,) . lLevelChanges . (levelData !!) <$> levelNumber <@ nextLevel)
                        `union` ((False,) <$> head <$> accumulatedChanges <@ prevLevel)
     
     -- nextLevelCausedInventoryChanges :: Behavior t InventoryChanges

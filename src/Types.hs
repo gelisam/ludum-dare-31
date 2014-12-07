@@ -40,6 +40,12 @@ data Move = Move
 type LevelChange = (TilePos, Tile)
 type LevelChanges = [LevelChange]
 
+data LevelDescription = LevelDescription
+  { lLevelChanges :: LevelChanges
+  , lForwardMessage :: String
+  , lBackwardMessage :: String
+  }
+
 data PlayerGraphics = PlayerGraphics
   { gPlayerVisible      :: Bool
   , gPlayerScreenPos    :: ScreenPos
