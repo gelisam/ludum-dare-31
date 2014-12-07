@@ -25,10 +25,10 @@ type TilePos = V Int
 type ScreenPos = V Float
 
 type Inventory = [KeyNumber]
-
 data InventoryChange = ReceiveKey KeyNumber
                      | ConsumeKey KeyNumber
   deriving (Show, Eq)
+type InventoryChanges = [InventoryChange]
 
 data Move = Move
   { mNewTile :: Tile
@@ -37,8 +37,8 @@ data Move = Move
   , mInventoryChanges :: InventoryChanges
   }
 
-type LevelChanges = [(TilePos, Tile)]
-type InventoryChanges = [InventoryChange]
+type LevelChange = (TilePos, Tile)
+type LevelChanges = [LevelChange]
 
 data PlayerGraphics = PlayerGraphics
   { gPlayerVisible      :: Bool

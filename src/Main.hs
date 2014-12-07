@@ -1,6 +1,7 @@
 {-# LANGUAGE RecordWildCards, ScopedTypeVariables #-}
 module Main where
 
+import Data.Maybe
 import Data.Traversable
 import Graphics.Gloss
 import Graphics.Gloss.Interface.FRP.ReactiveBanana
@@ -138,9 +139,7 @@ mainBanana tick time inputEvent = return picture
     -- debug stuff
     
     debugEvent :: Event t String
-    debugEvent = (printf "next level. inventory: %s" . show <$> inventory <@ nextLevel)
-         `union` (printf "prev level. inventory: %s" . show <$> inventory <@ prevLevel)
-         `union` (printf "inventory change: %s" . show <$> inventoryChange)
+    debugEvent = (printf "accumulated change: %s" . show <$> accumulatedChanges <@ inventoryChange)
     
     
     -- construct the game state for this frame
@@ -166,7 +165,14 @@ mainBanana tick time inputEvent = return picture
     playerGraphics = inputBlockingValue inputBlockingPlayer
     
     accumulatedChanges :: Behavior t [LevelChanges]
-    accumulatedChanges = pure []
+    accumulatedChanges = accumB [] $ go <$> stage <@> levelChanges
+      where
+        go :: Stage -> LevelChanges -> [LevelChanges] -> [LevelChanges]
+        go stage' = (:)
+                 . fmap (rememberOldTile . fst)
+          where
+            rememberOldTile :: TilePos -> LevelChange
+            rememberOldTile tilePos = (tilePos, fromJust (stage' `atV` tilePos))
     
     debugMessages :: Behavior t [String]
     debugMessages = accumB [] $ go <$> debugEvent
