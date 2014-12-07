@@ -22,3 +22,8 @@ validateMove stage ks tilePos = do
                   tilePos
                   (fmap fromIntegral tilePos)
                   inventoryChanges
+
+
+changeStage :: LevelChanges -> Stage -> Stage
+changeStage = foldr (.) id
+            . fmap (uncurry setAtV)

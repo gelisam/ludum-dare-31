@@ -33,6 +33,9 @@ down  = V   0 (-1)
 left  = V (-1)  0
 right = V   1   0
 
+
+-- I should probably use an Array...
+
 atL :: [a] -> Int -> Maybe a
 atL (x:_) 0 = Just x
 atL (_:xs) i | i > 0 = atL xs (i-1)
@@ -42,3 +45,11 @@ atV :: [[a]] -> V Int -> Maybe a
 atV xss (V x y) = do
     xs <- xss `atL` y
     xs `atL` x
+
+setAtL :: Int -> a -> [a] -> [a]
+setAtL 0 v (_:xs) = v : xs
+setAtL i v (x:xs) = x : setAtL (i-1) v xs
+setAtL _ _ [] = error "out of bounds"
+
+setAtV :: V Int -> a -> [[a]] -> [[a]]
+setAtV (V x y) v xss = setAtL y (setAtL x v (xss !! y)) xss

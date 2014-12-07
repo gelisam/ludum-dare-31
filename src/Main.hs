@@ -75,9 +75,15 @@ mainBanana tick time inputEvent = return picture
                             $ (startTilePos <$ nextLevel)
                       `union` (goalTilePos  <$ prevLevel)
     
+    nextLevelChanges :: Behavior t LevelChanges
+    nextLevelChanges = stepper []
+                             $ (levelData !!) <$> levelNumber <@ nextLevel
+    
     warpTilePos :: Event t TilePos
-    warpTilePos = nextWarpTilePos
-               <@ inputUnblocked inputBlockingLevelPopup
+    warpTilePos = nextWarpTilePos <@ inputUnblocked inputBlockingLevelPopup
+    
+    levelChanges :: Event t LevelChanges
+    levelChanges = nextLevelChanges <@ inputUnblocked inputBlockingLevelPopup
     
     
     -- popup stuff
@@ -128,7 +134,8 @@ mainBanana tick time inputEvent = return picture
                       `union` nextLevel
     
     stage :: Behavior t Stage
-    stage = pure initialStage
+    stage = accumB initialStage
+          $ changeStage <$> levelChanges
     
     inventory :: Behavior t Inventory
     inventory = pure []
