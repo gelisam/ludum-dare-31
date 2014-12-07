@@ -7,7 +7,6 @@ import Graphics.Gloss
 import Graphics.Gloss.Interface.FRP.ReactiveBanana
 import Reactive.Banana
 import Reactive.Banana.Frameworks
-import Text.Printf
 
 import GameAnimation
 import GameLogic
@@ -141,7 +140,7 @@ mainBanana tick time inputEvent = return picture
     -- debug stuff
     
     debugEvent :: Event t String
-    debugEvent = (printf "accumulated change: %s" . show <$> accumulatedChanges <@ inventoryChange)
+    debugEvent = never
     
     
     -- construct the game state for this frame
