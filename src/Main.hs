@@ -9,6 +9,7 @@ import Reactive.Banana.Frameworks
 import Text.Printf
 
 import GameAnimation
+import GameLogic
 import Graphics
 import Input
 import InputBlocking
@@ -34,11 +35,17 @@ mainBanana tick time inputEvent = return picture
     dirEvent :: Event t (V Int)
     dirEvent = whenE canMove $ filterJust $ keydown2dir <$> inputEvent
     
+    potentialWalkTilePos :: Event t TilePos
+    potentialWalkTilePos = (+) <$> playerTilePos <@> dirEvent
+    
+    validMove :: Event t Move
+    validMove = filterJust $ validateMove <$> stage <*> inventory <@> potentialWalkTilePos
+    
     walkTilePos :: Event t TilePos
-    walkTilePos = (+) <$> playerTilePos <@> dirEvent
+    walkTilePos = mTilePos <$> validMove
     
     walkTile :: Event t Tile
-    walkTile = filterJust $ atV <$> stage <@> walkTilePos
+    walkTile = mTile <$> validMove
     
     
     -- consequences of player movement
@@ -123,6 +130,9 @@ mainBanana tick time inputEvent = return picture
     stage :: Behavior t Stage
     stage = pure initialStage
     
+    inventory :: Behavior t Inventory
+    inventory = pure []
+    
     playerTilePos :: Behavior t TilePos
     playerTilePos = stepper startTilePos $ walkTilePos
                                    `union` warpTilePos
@@ -139,6 +149,7 @@ mainBanana tick time inputEvent = return picture
     gameState :: Behavior t GameState
     gameState = GameState <$> levelNumber
                           <*> stage
+                          <*> inventory
                           <*> playerTilePos
                           <*> playerGraphics
                           <*> accumulatedChanges
