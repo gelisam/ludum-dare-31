@@ -1,9 +1,11 @@
 module Sprites where
 
 import Control.Applicative
+import Control.Exception
 import Data.Monoid
 import Graphics.Gloss
 import System.FilePath
+import System.IO
 
 import Graphics.Gloss.Extra
 import Types
@@ -25,13 +27,18 @@ loadSprites images = Sprites <$> pure floorPicture
                              <*> pure wallPicture
                              <*> pure startPicture
                              <*> pure goalPicture
-                             <*> loadSprite (images </> "player.bmp")
+                             <*> loadSprite playerPicture (images </> "player.bmpp")
                              <*> pure lockedDoorPicture
                              <*> pure unlockedDoorPicture
                              <*> pure keyPicture
 
-loadSprite :: FilePath -> IO Picture
-loadSprite = fmap (scale 6 6) . loadBMP
+loadSprite :: Picture -> FilePath -> IO Picture
+loadSprite fallbackPicture imagePath = catch (scale 6 6 <$> loadBMP imagePath) rescue
+  where
+    rescue :: IOException -> IO Picture
+    rescue err = do
+      hPutStrLn stderr (show err)
+      return fallbackPicture
 
 renderTile :: Sprites -> Tile -> Picture
 renderTile = flip go
