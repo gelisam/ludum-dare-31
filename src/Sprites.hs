@@ -33,7 +33,7 @@ loadSprites images = Sprites <$> pure floorPicture
                              <*> pure keyPicture
 
 loadSprite :: Picture -> FilePath -> IO Picture
-loadSprite fallbackPicture imagePath = catch (scale 6 6 <$> loadBMP imagePath) rescue
+loadSprite fallbackPicture imagePath = catch (uscale 6 <$> loadBMP imagePath) rescue
   where
     rescue :: IOException -> IO Picture
     rescue err = do
@@ -59,7 +59,7 @@ renderPlayerSprite = playerSprite
 
 letterPicture :: String -> Picture
 letterPicture s = translate (-15) (-18)
-                $ scale 0.36 0.36
+                $ uscale 0.36
                 $ blackText s
 
 

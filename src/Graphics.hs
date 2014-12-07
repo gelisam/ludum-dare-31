@@ -13,7 +13,7 @@ import Vec2d
 
 renderHUD :: LevelNumber -> Picture
 renderHUD = translate (-315) 200
-          . scale 0.2 0.2
+          . uscale 0.2
           . blackText
           . printf "Level %d"
 
@@ -41,13 +41,13 @@ renderInventory sprites = translate (-300) 180
                         . fmap renderTinyKey
   where
     renderTinyKey :: KeyNumber -> Picture
-    renderTinyKey k = scale 0.5 0.5
+    renderTinyKey k = uscale 0.5
                     $ renderTile sprites (Key k)
 
 
 renderDebugMessage :: String -> Picture
 renderDebugMessage = translate (-315) (-235)
-                   . scale 0.1 0.1
+                   . uscale 0.1
                    . blackText
 
 renderDebugMessages :: [String] -> Picture

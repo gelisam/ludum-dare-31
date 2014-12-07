@@ -66,3 +66,7 @@ rectBoldPicture size picture = pictures $ offsetPicture <$> range (0, size)
 
 boldPicture :: Picture -> Picture
 boldPicture = rectBoldPicture (V 1 0)
+
+
+uscale :: Float -> Picture -> Picture
+uscale factor = scale factor factor

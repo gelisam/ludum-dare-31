@@ -66,7 +66,7 @@ whitePopupAnimation = whiteFadeInAnimation <> whiteFadeOutAnimation
 
 levelTitle :: Int -> Picture
 levelTitle = translate (-125) 100
-           . scale 0.5 0.5
+           . uscale 0.5
            . blackText
            . printf "Level %d"
 
@@ -92,7 +92,7 @@ rotatePopup :: Float -> Picture -> Picture
 rotatePopup t = translate 0 (-offset)
              . rotate angle
              . translate 0 offset
-             . scale factor factor
+             . uscale factor
   where
     offset = 960
     awayAngle = (-45)
