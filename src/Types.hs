@@ -10,6 +10,7 @@ type KeyNumber = Int
 
 data Tile = Start
           | Goal
+          | Empty
           | Floor
           | Wall
           | LockedDoor

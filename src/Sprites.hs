@@ -12,6 +12,9 @@ letterPicture s = translate (-5) (-6)
                 $ text s
 
 
+emptyPicture :: Picture
+emptyPicture = blank
+
 floorPicture :: Picture
 floorPicture = blank
 
@@ -47,6 +50,7 @@ keyPicture = circle 10
 tilePicture :: Tile -> Picture
 tilePicture Start        = startPicture
 tilePicture Goal         = goalPicture
+tilePicture Empty        = emptyPicture
 tilePicture Floor        = floorPicture
 tilePicture Wall         = wallPicture
 tilePicture LockedDoor   = lockedDoorPicture
