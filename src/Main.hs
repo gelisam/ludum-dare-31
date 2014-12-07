@@ -13,7 +13,6 @@ import Graphics
 import Input
 import InputBlocking
 import Popup
-import Reactive.Banana.Animation
 import TitleScreen
 import Types
 import Vec2d
@@ -34,20 +33,20 @@ mainBanana tick time inputEvent = return picture
     dirEvent :: Event t (V Int)
     dirEvent = whenE canMove $ filterJust $ keydown2dir <$> inputEvent
     
-    newTilePos :: Event t TilePos
-    newTilePos = (+) <$> playerTilePos <@> dirEvent
+    walkTilePos :: Event t TilePos
+    walkTilePos = (+) <$> playerTilePos <@> dirEvent
     
-    newTile :: Event t Tile
-    newTile = filterJust $ atV <$> stage <@> newTilePos
+    walkTile :: Event t Tile
+    walkTile = filterJust $ atV <$> stage <@> walkTilePos
     
     
     -- consequences of player movement
     
     startEvent :: Event t ()
-    startEvent = () <$ filterE (== Start) newTile
+    startEvent = () <$ filterE (== Start) walkTile
     
     goalEvent :: Event t ()
-    goalEvent = () <$ filterE (== Goal) newTile
+    goalEvent = () <$ filterE (== Goal) walkTile
     
     
     -- level changes
@@ -57,6 +56,15 @@ mainBanana tick time inputEvent = return picture
     
     prevLevel :: Event t LevelNumber
     prevLevel = subtract 1 <$> levelNumber <@ startEvent
+    
+    nextWarpTilePos :: Behavior t TilePos
+    nextWarpTilePos = stepper undefined
+                            $ (startTilePos <$ nextLevel)
+                      `union` (goalTilePos  <$ prevLevel)
+    
+    warpTilePos :: Event t TilePos
+    warpTilePos = nextWarpTilePos
+               <@ inputUnblocked inputBlockingLevelPopup
     
     
     -- popup stuff
@@ -72,23 +80,31 @@ mainBanana tick time inputEvent = return picture
     
     -- animation stuff
     
-    playerMovement :: Event t (Animation ScreenPos)
-    playerMovement = interpolate 0.05 <$> oldPos <@> newPos
-      where
-        oldPos :: Behavior t ScreenPos
-        oldPos = fmap fromIntegral <$> playerTilePos
-        
-        newPos :: Event t ScreenPos
-        newPos = fmap fromIntegral <$> newTilePos
+    playerScreenPos :: Behavior t ScreenPos
+    playerScreenPos = fmap fromIntegral <$> playerTilePos
     
-    animatedPlayerScreenPos :: Animated t ScreenPos
-    animatedPlayerScreenPos = animateB time startScreenPos playerMovement
+    walkScreenPos :: Event t ScreenPos
+    walkScreenPos = fmap fromIntegral <$> walkTilePos
     
-    animatedPlayer :: Animated t PlayerGraphics
-    animatedPlayer = PlayerGraphics True <$> animatedPlayerScreenPos
+    warpScreenPos :: Event t ScreenPos
+    warpScreenPos = fmap fromIntegral <$> warpTilePos
+    
+    walkAnimation :: Event t (Animation ScreenPos)
+    walkAnimation = interpolate 0.05 <$> playerScreenPos <@> walkScreenPos
+    
+    warpAnimation :: Event t (Animation ScreenPos)
+    warpAnimation = interpolate 1 <$> playerScreenPos <@> warpScreenPos
+    
+    inputBlockingPlayerScreenPos :: InputBlocking t ScreenPos
+    inputBlockingPlayerScreenPos = blockInputB tick time startScreenPos
+                                 $ (inputBlockingAnimation <$> walkAnimation)
+                           `union` (inputBlockingAnimation <$> warpAnimation)
+    
+    inputBlockingPlayer :: InputBlocking t PlayerGraphics
+    inputBlockingPlayer = PlayerGraphics True <$> inputBlockingPlayerScreenPos
     
     inputIsBlocked :: Behavior t Bool
-    inputIsBlocked = or <$> sequenceA [ isAnimating animatedPlayer
+    inputIsBlocked = or <$> sequenceA [ isBlockingInput inputBlockingPlayer
                                       , isBlockingInput inputBlockingTitleScreen
                                       , isBlockingInput inputBlockingLevelPopup
                                       ]
@@ -111,10 +127,11 @@ mainBanana tick time inputEvent = return picture
     stage = pure initialStage
     
     playerTilePos :: Behavior t TilePos
-    playerTilePos = accumB startTilePos $ (+) <$> dirEvent
+    playerTilePos = stepper startTilePos $ walkTilePos
+                                   `union` warpTilePos
     
     playerGraphics :: Behavior t PlayerGraphics
-    playerGraphics = animatedValue animatedPlayer
+    playerGraphics = inputBlockingValue inputBlockingPlayer
     
     accumulatedChanges :: Behavior t [LevelChanges]
     accumulatedChanges = pure []
