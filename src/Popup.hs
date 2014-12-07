@@ -6,6 +6,7 @@ import Graphics.Gloss
 import Text.Printf
 
 import Animation
+import InputBlocking
 
 
 fadeDuration :: Float
@@ -15,11 +16,11 @@ whiteFadeOutDuration :: Float
 whiteFadeOutDuration = 2
 
 
-fadeInAnimation :: Animation Float
-fadeInAnimation = interpolate fadeDuration 0 1
+fadeInAnimation :: InputBlockingAnimation Float
+fadeInAnimation = inputBlockingAnimation $ interpolate fadeDuration 0 1
 
-fadeOutAnimation :: Animation Float
-fadeOutAnimation = interpolate whiteFadeOutDuration 1 0
+fadeOutAnimation :: InputBlockingAnimation Float
+fadeOutAnimation = inputAllowingAnimation $ interpolate whiteFadeOutDuration 1 0
 
 
 -- level popup (fade in, fade out)
@@ -27,13 +28,13 @@ fadeOutAnimation = interpolate whiteFadeOutDuration 1 0
 staticLevelPopup :: Int -> Picture
 staticLevelPopup n = staticWhiteFilter <> levelTitle n
 
-prevLevelPopupAnimation :: Int -> Animation Picture
+prevLevelPopupAnimation :: Int -> InputBlockingAnimation Picture
 prevLevelPopupAnimation n = mappend <$> whitePopupAnimation
-                                    <*> prevLevelTitleAnimation n
+                                    <*> inputAllowingAnimation (prevLevelTitleAnimation n)
 
-nextLevelPopupAnimation :: Int -> Animation Picture
+nextLevelPopupAnimation :: Int -> InputBlockingAnimation Picture
 nextLevelPopupAnimation n = mappend <$> whitePopupAnimation
-                                    <*> nextLevelTitleAnimation n
+                                    <*> inputAllowingAnimation (nextLevelTitleAnimation n)
 
 
 -- white filter
@@ -47,13 +48,13 @@ makeWhiteFilter alpha = color white' (rectangleSolid 640 480)
     white' :: Color
     white' = makeColor 1 1 1 (0.9 * alpha)
 
-whiteFadeInAnimation :: Animation Picture
+whiteFadeInAnimation :: InputBlockingAnimation Picture
 whiteFadeInAnimation = makeWhiteFilter <$> fadeInAnimation
 
-whiteFadeOutAnimation :: Animation Picture
+whiteFadeOutAnimation :: InputBlockingAnimation Picture
 whiteFadeOutAnimation = makeWhiteFilter <$> fadeOutAnimation
 
-whitePopupAnimation :: Animation Picture
+whitePopupAnimation :: InputBlockingAnimation Picture
 whitePopupAnimation = whiteFadeInAnimation <> whiteFadeOutAnimation
 
 

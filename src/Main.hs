@@ -24,7 +24,7 @@ mainBanana :: forall t. Frameworks t
            -> Behavior t Float
            -> Event t InputEvent
            -> Moment t (Behavior t Picture)
-mainBanana tickEvent time inputEvent = return picture
+mainBanana tick time inputEvent = return picture
   where
     -- player movement
     
@@ -64,10 +64,10 @@ mainBanana tickEvent time inputEvent = return picture
     inputBlockingTitleScreen :: InputBlocking t Picture
     inputBlockingTitleScreen = titleScreen time inputEvent
     
-    animatedLevelPopup :: Animated t Picture
-    animatedLevelPopup = animateB time blank
-                       $ (prevLevelPopupAnimation <$> prevLevel)
-                 `union` (nextLevelPopupAnimation <$> nextLevel)
+    inputBlockingLevelPopup :: InputBlocking t Picture
+    inputBlockingLevelPopup = blockInputB tick time blank
+                            $ (prevLevelPopupAnimation <$> prevLevel)
+                      `union` (nextLevelPopupAnimation <$> nextLevel)
     
     
     -- animation stuff
@@ -90,7 +90,7 @@ mainBanana tickEvent time inputEvent = return picture
     inputIsBlocked :: Behavior t Bool
     inputIsBlocked = or <$> sequenceA [ isAnimating animatedPlayer
                                       , isBlockingInput inputBlockingTitleScreen
-                                      , isAnimating animatedLevelPopup
+                                      , isBlockingInput inputBlockingLevelPopup
                                       ]
     
     
@@ -136,7 +136,7 @@ mainBanana tickEvent time inputEvent = return picture
     picture :: Behavior t Picture
     picture = pictures <$> sequenceA [ renderGameState <$> gameState
                                      , inputBlockingValue inputBlockingTitleScreen
-                                     , animatedValue animatedLevelPopup
+                                     , inputBlockingValue inputBlockingLevelPopup
                                      ]
 
 main :: IO ()
