@@ -55,10 +55,10 @@ mainBanana sprites tick time inputEvent = return picture
     
     -- consequences of player movement
     
-    tileChange :: Event t (TilePos, Tile)
+    tileChange :: Event t TileChange
     tileChange = go <$> validMove
       where
-        go :: Move -> (TilePos, Tile)
+        go :: Move -> TileChange
         go (Move {..}) = (mTilePos, mNewTile)
     
     inventoryChange :: Event t InventoryChanges
@@ -159,11 +159,17 @@ mainBanana sprites tick time inputEvent = return picture
     
     inputBlockingPlayer :: InputBlocking t PlayerGraphics
     inputBlockingPlayer = blockInputB tick time initialPlayerGraphics
-                                 $ (walkAnimation <$> playerScreenPos <@> walkScreenPos)
-                           `union` (warpAnimation <$> playerScreenPos <@> warpScreenPos)
+                                    $ (walkAnimation <$> playerScreenPos <@> walkScreenPos)
+                              `union` (warpAnimation <$> playerScreenPos <@> warpScreenPos)
+    
+    inputBlockingStage :: InputBlocking t Stage
+    inputBlockingStage = blockInputB tick time initialStage
+                                   $ (blinkingObjectAnimation <$> stage <@> (snd <$> levelChanges))
+                             `union` (tileChangingAnimation <$> stage <@> tileChange)
     
     inputIsBlocked :: Behavior t Bool
     inputIsBlocked = or <$> sequenceA [ isBlockingInput inputBlockingPlayer
+                                      , isBlockingInput inputBlockingStage
                                       , isBlockingInput inputBlockingTitleScreen
                                       , isBlockingInput inputBlockingLevelPopup
                                       , isBlockingInput inputBlockingEnding
@@ -183,9 +189,7 @@ mainBanana sprites tick time inputEvent = return picture
                       `union` nextLevel
     
     stage :: Behavior t Stage
-    stage = accumB initialStage
-                 $ (changeStage . snd <$> levelChanges)
-           `union` (changeTile <$> tileChange)
+    stage = inputBlockingValue inputBlockingStage
     
     inventory :: Behavior t Inventory
     inventory = accumB []

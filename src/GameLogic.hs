@@ -32,7 +32,7 @@ consumeTile LockedDoor = UnlockedDoor
 consumeTile (Key _)    = Floor
 consumeTile tile       = tile
 
-changeTile :: (TilePos, Tile) -> Stage -> Stage
+changeTile :: TileChange -> Stage -> Stage
 changeTile change = (// [change])
 
 changeStage :: LevelChanges -> Stage -> Stage

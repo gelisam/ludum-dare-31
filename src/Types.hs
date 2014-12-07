@@ -37,7 +37,8 @@ data Move = Move
   , mInventoryChanges :: InventoryChanges
   }
 
-type LevelChange = (TilePos, Tile)
+type TileChange = (TilePos, Tile)
+type LevelChange = TileChange
 type LevelChanges = [LevelChange]
 
 data LevelDescription = LevelDescription
