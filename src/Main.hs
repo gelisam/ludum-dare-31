@@ -12,6 +12,7 @@ import GameAnimation
 import Graphics
 import Input
 import InputBlocking
+import LevelData
 import Popup
 import TitleScreen
 import Types
