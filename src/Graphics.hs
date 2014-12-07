@@ -19,14 +19,14 @@ renderHUD = translate (-315) 200
 
 
 insideStage :: Stage -> Picture -> Picture
-insideStage = insideGrid 20 20
+insideStage = insideGrid 60 60
 
 renderStage :: Stage -> Picture
-renderStage = pictureGrid 20 20
+renderStage = pictureGrid 60 60
             . fmap tilePicture
 
 atStagePos :: V Float -> Picture -> Picture
-atStagePos = atGridPos 20 20
+atStagePos = atGridPos 60 60
 
 
 renderPlayer :: PlayerGraphics -> Picture
@@ -35,9 +35,9 @@ renderPlayer (PlayerGraphics {..}) = guardPicture gPlayerVisible
 
 
 renderInventory :: Inventory -> Picture
-renderInventory = translate (-305) 180
-                . pictureRow 25
-                . fmap (const keyPicture)
+renderInventory = translate (-300) 180
+                . pictureRow 35
+                . fmap (scale 0.5 0.5 . const keyPicture)
 
 
 renderDebugMessage :: String -> Picture

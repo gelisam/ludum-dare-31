@@ -13,7 +13,7 @@ gameTitle = "I've Seen This Room Before"
 
 
 roomPadding :: V Int
-roomPadding = V 13 9
+roomPadding = V 2 1
 
 padTilePos :: TilePos -> TilePos
 padTilePos tilePos = tilePos + roomPadding + 1

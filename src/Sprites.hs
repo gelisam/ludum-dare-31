@@ -7,8 +7,8 @@ import Types
 
 
 letterPicture :: String -> Picture
-letterPicture s = translate (-5) (-6)
-                $ scale 0.12 0.12
+letterPicture s = translate (-15) (-18)
+                $ scale 0.36 0.36
                 $ text s
 
 
@@ -22,19 +22,19 @@ invisibleWallPicture :: Picture
 invisibleWallPicture = blank
 
 wallPicture :: Picture
-wallPicture = circle 10
+wallPicture = circle 30
 
 startPicture :: Picture
-startPicture = circle 10
+startPicture = circle 30
             <> letterPicture "S"
 
 goalPicture :: Picture
-goalPicture = circle 10
+goalPicture = circle 30
            <> letterPicture "G"
 
 playerPicture :: Picture
-playerPicture = color white (thickCircle 0 20)
-             <> circle 10
+playerPicture = color white (thickCircle 0 60)
+             <> circle 30
              <> rotate 90 (letterPicture ":)")
 
 lockedDoorPicture :: Picture
@@ -42,11 +42,11 @@ lockedDoorPicture = unlockedDoorPicture
                  <> rotate (-90) (letterPicture "-")
 
 unlockedDoorPicture :: Picture
-unlockedDoorPicture = circle 10
+unlockedDoorPicture = circle 30
                    <> rotate (-90) (letterPicture "D")
 
 keyPicture :: Picture
-keyPicture = circle 10
+keyPicture = circle 30
           <> letterPicture "K"
 
 
