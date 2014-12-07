@@ -15,12 +15,15 @@ fadeDuration = 0.75
 whiteFadeOutDuration :: Float
 whiteFadeOutDuration = 2
 
+whiteOpacity :: Float
+whiteOpacity = 0.9
+
 
 fadeInAnimation :: InputBlockingAnimation Float
-fadeInAnimation = inputBlockingAnimation $ interpolate fadeDuration 0 1
+fadeInAnimation = inputBlockingAnimation $ interpolate fadeDuration 0 whiteOpacity
 
 fadeOutAnimation :: InputBlockingAnimation Float
-fadeOutAnimation = inputAllowingAnimation $ interpolate whiteFadeOutDuration 1 0
+fadeOutAnimation = inputAllowingAnimation $ interpolate whiteFadeOutDuration whiteOpacity 0
 
 
 -- level popup (fade in, fade out)
@@ -40,13 +43,13 @@ nextLevelPopupAnimation n = mappend <$> whitePopupAnimation
 -- white filter
 
 staticWhiteFilter :: Picture
-staticWhiteFilter = makeWhiteFilter 1
+staticWhiteFilter = makeWhiteFilter whiteOpacity
 
 makeWhiteFilter :: Float -> Picture
 makeWhiteFilter alpha = color white' (rectangleSolid 640 480)
   where
     white' :: Color
-    white' = makeColor 1 1 1 (0.9 * alpha)
+    white' = makeColor 1 1 1 alpha
 
 whiteFadeInAnimation :: InputBlockingAnimation Picture
 whiteFadeInAnimation = makeWhiteFilter <$> fadeInAnimation

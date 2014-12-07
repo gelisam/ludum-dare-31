@@ -50,6 +50,10 @@ guardPicture True = id
 guardPicture False = const blank
 
 
+rectBoldPicture :: V Int -> Picture -> Picture
+rectBoldPicture size picture = pictures $ offsetPicture <$> range (0, size)
+  where
+    offsetPicture (V x y) =  translate (fromIntegral x) (fromIntegral y) picture
+
 boldPicture :: Picture -> Picture
-boldPicture picture = picture
-                   <> translate 1 0 picture
+boldPicture = rectBoldPicture (V 1 0)
