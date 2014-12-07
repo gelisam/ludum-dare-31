@@ -23,7 +23,7 @@ data Sprites = Sprites
   }
 
 loadSprites :: FilePath -> IO Sprites
-loadSprites images = Sprites <$> pure floorPicture
+loadSprites images = Sprites <$> loadSprite floorPicture (images </> "floor.bmp")
                              <*> loadSprite wallPicture (images </> "wall.bmp")
                              <*> pure startPicture
                              <*> pure goalPicture
