@@ -1,4 +1,4 @@
-{-# LANGUAGE RecordWildCards, ScopedTypeVariables #-}
+{-# LANGUAGE RecordWildCards, ScopedTypeVariables, TupleSections #-}
 module Main where
 
 import Data.Maybe
@@ -85,9 +85,10 @@ mainBanana tick time inputEvent = return picture
                             $ (startTilePos <$ nextLevel)
                       `union` (goalTilePos  <$ prevLevel)
     
-    nextLevelChanges :: Behavior t LevelChanges
-    nextLevelChanges = stepper []
-                             $ (levelData !!) <$> levelNumber <@ nextLevel
+    nextLevelChanges :: Behavior t (Bool, LevelChanges)
+    nextLevelChanges = stepper undefined
+                             $ ((True,) <$> (levelData !!) <$> levelNumber <@ nextLevel)
+                       `union` ((False,) <$> head <$> accumulatedChanges <@ prevLevel)
     
     -- nextLevelCausedInventoryChanges :: Behavior t InventoryChanges
     -- nextLevelCausedInventoryChanges = undefined
@@ -95,7 +96,7 @@ mainBanana tick time inputEvent = return picture
     warpTilePos :: Event t TilePos
     warpTilePos = nextWarpTilePos <@ inputUnblocked inputBlockingLevelPopup
     
-    levelChanges :: Event t LevelChanges
+    levelChanges :: Event t (Bool, LevelChanges)
     levelChanges = nextLevelChanges <@ inputUnblocked inputBlockingLevelPopup
     
     -- levelCausedInventoryChange :: Event t InventoryChanges
@@ -150,7 +151,7 @@ mainBanana tick time inputEvent = return picture
     
     stage :: Behavior t Stage
     stage = accumB initialStage
-                 $ (changeStage <$> levelChanges)
+                 $ (changeStage . snd <$> levelChanges)
            `union` (changeTile <$> tileChange)
     
     inventory :: Behavior t Inventory
@@ -167,12 +168,16 @@ mainBanana tick time inputEvent = return picture
     accumulatedChanges :: Behavior t [LevelChanges]
     accumulatedChanges = accumB [] $ go <$> stage <@> levelChanges
       where
-        go :: Stage -> LevelChanges -> [LevelChanges] -> [LevelChanges]
-        go stage' = (:)
-                 . fmap (rememberOldTile . fst)
+        go :: Stage -> (Bool, LevelChanges) -> [LevelChanges] -> [LevelChanges]
+        go _ (False, _) = tail
+        go stage' (True, xs) = rememberOldTiles xs
           where
-            rememberOldTile :: TilePos -> LevelChange
-            rememberOldTile tilePos = (tilePos, fromJust (stage' `atV` tilePos))
+            rememberOldTiles :: LevelChanges -> [LevelChanges] -> [LevelChanges]
+            rememberOldTiles = (:)
+                             . fmap (rememberOldTile . fst)
+              where
+                rememberOldTile :: TilePos -> LevelChange
+                rememberOldTile tilePos = (tilePos, fromJust (stage' `atV` tilePos))
     
     debugMessages :: Behavior t [String]
     debugMessages = accumB [] $ go <$> debugEvent
