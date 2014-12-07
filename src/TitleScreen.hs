@@ -38,10 +38,6 @@ titleScreen showTitleScreen tick time inputEvent = inputBlockingBlinkingTitleScr
     inputBlockingFadeIn = blockInputB tick time blank
                         $ fadeInTitleScreenAnimation <$ showTitleScreen
     
-    inputBlockingFadeOut :: InputBlocking t Picture
-    inputBlockingFadeOut = blockInputB tick time blank
-                         $ fadeOutTitleScreenAnimation <$ anyKeyEvent
-    
     inputBlockingNonBlinkingTitleScreen :: InputBlocking t Picture
     inputBlockingNonBlinkingTitleScreen = blockInputB tick time staticTitleScreen
                                         $ (fadeInTitleScreenAnimation <$ showTitleScreen)
