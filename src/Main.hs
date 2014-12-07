@@ -70,7 +70,8 @@ mainBanana tick time inputEvent = return picture
     -- level changes
     
     nextLevel :: Event t LevelNumber
-    nextLevel = (+1) <$> levelNumber <@ goalEvent
+    nextLevel = whenE ((lastLevel >) <$> levelNumber)
+              $ (+1) <$> levelNumber <@ goalEvent
     
     prevLevel :: Event t LevelNumber
     prevLevel = whenE ((0 <) <$> levelNumber)

@@ -33,3 +33,6 @@ levelData = [[(V 2 3, Wall)]
             ,[(V 1 4, LockedDoor)]
             ,[(V 3 3, Wall)]
             ]
+
+lastLevel :: LevelNumber
+lastLevel = length levelData
