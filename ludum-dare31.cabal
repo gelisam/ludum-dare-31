@@ -13,6 +13,7 @@ executable ludum-dare31
   -- other-extensions:    
   build-depends:       base >=4.7 && <4.8
                      , array
+                     , filepath
                      , gloss
                      , reactive-banana
   hs-source-dirs:      src

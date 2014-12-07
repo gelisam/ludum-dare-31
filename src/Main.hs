@@ -16,17 +16,19 @@ import Input
 import InputBlocking
 import LevelData
 import Popup
+import Sprites
 import TitleScreen
 import Types
 import Vec2d
 
 
 mainBanana :: forall t. Frameworks t
-           => Event t ()
+           => Sprites
+           -> Event t ()
            -> Behavior t Float
            -> Event t InputEvent
            -> Moment t (Behavior t Picture)
-mainBanana tick time inputEvent = return picture
+mainBanana sprites tick time inputEvent = return picture
   where
     -- player movement
     
@@ -208,14 +210,16 @@ mainBanana tick time inputEvent = return picture
     -- this frame's graphics
     
     picture :: Behavior t Picture
-    picture = pictures <$> sequenceA [ renderGameState <$> gameState
+    picture = pictures <$> sequenceA [ renderGameState sprites <$> gameState
                                      , inputBlockingValue inputBlockingTitleScreen
                                      , inputBlockingValue inputBlockingLevelPopup
                                      , inputBlockingValue inputBlockingEnding
                                      ]
 
 main :: IO ()
-main = playBanana (InWindow gameTitle (640, 480) (800, 50))
-                  white
-                  60
-                  mainBanana
+main = do
+    sprites <- loadSprites "images"
+    playBanana (InWindow gameTitle (640, 480) (800, 50))
+               white
+               60
+               (mainBanana sprites)

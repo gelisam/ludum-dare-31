@@ -1,10 +1,53 @@
 module Sprites where
 
+import Control.Applicative
 import Data.Monoid
 import Graphics.Gloss
+import System.FilePath
 
 import Graphics.Gloss.Extra
 import Types
+
+
+data Sprites = Sprites
+  { floorSprite        :: Picture
+  , wallSprite         :: Picture
+  , startSprite        :: Picture
+  , goalSprite         :: Picture
+  , playerSprite       :: Picture
+  , lockedDoorSprite   :: Picture
+  , unlockedDoorSprite :: Picture
+  , keySprite          :: Picture
+  }
+
+loadSprites :: FilePath -> IO Sprites
+loadSprites images = Sprites <$> pure floorPicture
+                             <*> pure wallPicture
+                             <*> pure startPicture
+                             <*> pure goalPicture
+                             <*> loadSprite (images </> "player.bmp")
+                             <*> pure lockedDoorPicture
+                             <*> pure unlockedDoorPicture
+                             <*> pure keyPicture
+
+loadSprite :: FilePath -> IO Picture
+loadSprite = fmap (scale 6 6) . loadBMP
+
+renderTile :: Sprites -> Tile -> Picture
+renderTile = flip go
+  where
+    go Start        = startSprite
+    go Goal         = goalSprite
+    go Empty        = const blank
+    go Floor        = floorSprite
+    go Wall         = wallSprite
+    go XWall        = const blank
+    go LockedDoor   = lockedDoorSprite
+    go UnlockedDoor = unlockedDoorSprite
+    go (Key _)      = keySprite
+
+renderPlayerSprite :: Sprites -> Picture
+renderPlayerSprite = playerSprite
 
 
 letterPicture :: String -> Picture
