@@ -1,4 +1,4 @@
-More of the Same (Ludum Dare 31)
+I've Seen This Room Before (Ludum Dare 31)
 ===
 
 You are in a room. The only room in the game. There are stairways going up and down, but somehow they lead back to this same room. The architect must have been a fan of Escher paintings.

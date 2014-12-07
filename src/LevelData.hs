@@ -5,7 +5,7 @@ import Vec2d
 
 
 gameTitle :: String
-gameTitle = "More of the Same"
+gameTitle = "I've Seen This Room Before"
 
 
 startTilePos :: TilePos

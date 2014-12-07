@@ -98,8 +98,8 @@ titleScreen showTitleScreen tick time inputEvent = inputBlockingBlinkingTitleScr
     commonText = title <> subtitle
     
     title :: Picture
-    title = translate (-309) 100
-          $ scale 0.5 0.5
+    title = translate (-312) 100
+          $ scale 0.34 0.34
           $ text gameTitle
     
     subtitle :: Picture
