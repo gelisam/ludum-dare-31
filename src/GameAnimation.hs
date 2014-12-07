@@ -13,7 +13,7 @@ walkAnimation screenPos1 screenPos2 = inputBlockingAnimation
                                     $ PlayerGraphics True <$> screenPos
   where
     screenPos :: Animation ScreenPos
-    screenPos = interpolate 0.15 screenPos1 screenPos2
+    screenPos = interpolate 0.25 screenPos1 screenPos2
 
 warpAnimation :: ScreenPos -> ScreenPos -> InputBlockingAnimation PlayerGraphics
 warpAnimation screenPos1 screenPos2 = inputBlockingAnimation warping
