@@ -6,6 +6,7 @@ import Graphics.Gloss
 import Text.Printf
 
 import Animation
+import Graphics.Gloss.Extra
 import InputBlocking
 
 
@@ -66,7 +67,7 @@ whitePopupAnimation = whiteFadeInAnimation <> whiteFadeOutAnimation
 levelTitle :: Int -> Picture
 levelTitle = translate (-125) 100
            . scale 0.5 0.5
-           . text
+           . blackText
            . printf "Level %d"
 
 levelTitleAnimation :: Int -> Animation Picture

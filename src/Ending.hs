@@ -49,7 +49,7 @@ endingAnimation = inputBlockingAnimation
         sectionTitle = rectBoldPicture (V 1 1) . text'
         
         text' :: String -> Picture
-        text' = scale 0.15 0.15 . text
+        text' = scale 0.15 0.15 . blackText
         
         author :: Picture
         author = text' "Samuel Gelineau"
@@ -63,4 +63,4 @@ endingAnimation = inputBlockingAnimation
     
     endingScreen = rectBoldPicture (V 8 2)
                  $ translate (-270) 0
-                 $ text "The End"
+                 $ blackText "The End"

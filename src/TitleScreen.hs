@@ -101,12 +101,12 @@ titleScreen showTitleScreen tick time inputEvent = inputBlockingBlinkingTitleScr
     title = boldPicture
           $ translate (-312) 100
           $ scale 0.34 0.34
-          $ text gameTitle
+          $ blackText gameTitle
     
     subtitle :: Picture
     subtitle = translate (-290) 50
              $ scale 0.2 0.2
-             $ text "Samuel Gelineau's entry for Ludum Dare 31"
+             $ blackText "Samuel Gelineau's entry for Ludum Dare 31"
             <> accent
       where
         accent :: Picture
@@ -123,4 +123,4 @@ titleScreen showTitleScreen tick time inputEvent = inputBlockingBlinkingTitleScr
     staticMessage :: Picture
     staticMessage = translate (-250) (-100)
                   $ scale 0.3 0.3
-                  $ text "Press any key to begin!"
+                  $ blackText "Press any key to begin!"

@@ -50,6 +50,11 @@ guardPicture True = id
 guardPicture False = const blank
 
 
+-- Workaround for a bug whereby drawing a sprite changes the text color.
+blackText :: String -> Picture
+blackText = color black . text
+
+
 rectBoldPicture :: V Int -> Picture -> Picture
 rectBoldPicture size picture = pictures $ offsetPicture <$> range (0, size)
   where

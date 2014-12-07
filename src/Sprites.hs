@@ -3,13 +3,14 @@ module Sprites where
 import Data.Monoid
 import Graphics.Gloss
 
+import Graphics.Gloss.Extra
 import Types
 
 
 letterPicture :: String -> Picture
 letterPicture s = translate (-15) (-18)
                 $ scale 0.36 0.36
-                $ text s
+                $ blackText s
 
 
 emptyPicture :: Picture

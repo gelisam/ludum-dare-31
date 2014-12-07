@@ -14,7 +14,7 @@ import Vec2d
 renderHUD :: LevelNumber -> Picture
 renderHUD = translate (-315) 200
           . scale 0.2 0.2
-          . text
+          . blackText
           . printf "Level %d"
 
 
@@ -43,7 +43,7 @@ renderInventory = translate (-300) 180
 renderDebugMessage :: String -> Picture
 renderDebugMessage = translate (-315) (-235)
                    . scale 0.1 0.1
-                   . text
+                   . blackText
 
 renderDebugMessages :: [String] -> Picture
 renderDebugMessages = pictureCol 11 . fmap renderDebugMessage
