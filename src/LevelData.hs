@@ -1,5 +1,8 @@
 module LevelData where
 
+import Data.Array
+import Data.List
+
 import Types
 import Vec2d
 
@@ -23,12 +26,24 @@ goalScreenPos = fmap fromIntegral goalTilePos
 initialPlayerGraphics :: PlayerGraphics
 initialPlayerGraphics = PlayerGraphics True startScreenPos
 
-initialStage :: [[Tile]]
-initialStage = [[Start, Floor, Floor, Floor, Wall ]
-               ,[Wall , Floor, Floor, Floor, Wall ]
-               ,[Wall , Floor, Floor, Floor, Wall ]
-               ,[Wall , Floor, Floor, Floor, Wall ]
-               ,[Wall , Floor, Floor, Floor, Goal]]
+initialStage :: Stage
+initialStage = listArray (0, maxIndex)
+             $ concat
+             $ transpose smallRoom
+  where
+    smallRoom :: [[Tile]]
+    smallRoom = [[Start, Floor, Floor, Floor, Wall]
+                ,[Wall , Floor, Floor, Floor, Wall]
+                ,[Wall , Floor, Floor, Floor, Wall]
+                ,[Wall , Floor, Floor, Floor, Wall]
+                ,[Wall , Floor, Floor, Floor, Goal]]
+    
+    w, h :: Int
+    w = length (head smallRoom)
+    h = length smallRoom
+    
+    maxIndex :: TilePos
+    maxIndex = V (w-1) (h-1)
 
 levelData :: [LevelChanges]
 levelData = [[(V 2 3, Wall)]

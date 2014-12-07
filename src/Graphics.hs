@@ -23,7 +23,7 @@ insideStage = insideGrid 20 20
 
 renderStage :: Stage -> Picture
 renderStage = pictureGrid 20 20
-            . (fmap.fmap) tilePicture
+            . fmap tilePicture
 
 atStagePos :: V Float -> Picture -> Picture
 atStagePos = atGridPos 20 20

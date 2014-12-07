@@ -1,13 +1,14 @@
 module GameLogic where
 
+import Data.Array
 import Data.List
 
 import Types
-import Vec2d
 
 
 validateTilePos :: Stage -> TilePos -> Maybe Tile
-validateTilePos = atV
+validateTilePos xs i | inRange (bounds xs) i = Just (xs ! i)
+                     | otherwise             = Nothing
 
 validateTile :: Inventory -> Tile -> Maybe InventoryChanges
 validateTile _     Wall       = Nothing
@@ -31,11 +32,10 @@ consumeTile (Key _)    = Floor
 consumeTile tile       = tile
 
 changeTile :: (TilePos, Tile) -> Stage -> Stage
-changeTile = uncurry setAtV
+changeTile change = (// [change])
 
 changeStage :: LevelChanges -> Stage -> Stage
-changeStage = foldr (.) id
-            . fmap changeTile
+changeStage = flip (//)
 
 changeInventory :: InventoryChanges -> Inventory -> Inventory
 changeInventory = foldr (.) id

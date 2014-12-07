@@ -1,5 +1,7 @@
 module Types where
 
+import Data.Array
+
 import Vec2d
 
 
@@ -15,10 +17,10 @@ data Tile = Start
           | Key KeyNumber
   deriving (Show, Eq)
 
-type Stage = [[Tile]]
-
 type TilePos = V Int
 type ScreenPos = V Float
+
+type Stage = Array TilePos Tile
 
 type Inventory = [KeyNumber]
 data InventoryChange = ReceiveKey KeyNumber

@@ -2,12 +2,19 @@
 module Vec2d where
 
 import Control.Applicative
+import Data.Ix
 
 
 data V a = V
   { vx :: a
   , vy :: a
-  } deriving (Show, Eq, Functor)
+  } deriving (Show, Eq, Ord, Ix, Functor)
+
+runV :: V a -> (a, a)
+runV (V x y) = (x, y)
+
+runRange :: (V a, V a ) -> ((a,a), (a,a))
+runRange (lo, hi) = (runV lo, runV hi)
 
 instance Applicative V where
     pure x = V x x

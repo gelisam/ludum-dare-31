@@ -1,7 +1,7 @@
 {-# LANGUAGE RecordWildCards, ScopedTypeVariables, TupleSections #-}
 module Main where
 
-import Data.Maybe
+import Data.Array
 import Data.Traversable
 import Graphics.Gloss
 import Graphics.Gloss.Interface.FRP.ReactiveBanana
@@ -178,7 +178,7 @@ mainBanana tick time inputEvent = return picture
                              . fmap (rememberOldTile . fst)
               where
                 rememberOldTile :: TilePos -> LevelChange
-                rememberOldTile tilePos = (tilePos, fromJust (stage' `atV` tilePos))
+                rememberOldTile tilePos = (tilePos, stage' ! tilePos)
     
     debugMessages :: Behavior t [String]
     debugMessages = accumB [] $ go <$> debugEvent

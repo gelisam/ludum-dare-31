@@ -1,6 +1,8 @@
+{-# LANGUAGE ScopedTypeVariables #-}
 module Graphics.Gloss.Extra where
 
 import Control.Applicative
+import Data.Array
 import Data.Monoid
 import Graphics.Gloss
 
@@ -16,12 +18,10 @@ pictureCol _ [] = blank
 pictureCol dy (x:xs) = x <> translate 0 dy (pictureCol dy xs)
 
 
-insideGrid :: Float -> Float -> [[a]] -> Picture -> Picture
-insideGrid _ _ [] = id
+insideGrid :: Float -> Float -> Array (V Int) a -> Picture -> Picture
 insideGrid cellSizeX cellSizeY cells = translate (-centerX) (-centerY)
   where
-    w = length (head cells)
-    h = length cells
+    (_, V w h) = bounds cells
     dimV = V (fromIntegral w) (fromIntegral h)
     
     cellSizeV = V cellSizeX cellSizeY
@@ -31,12 +31,18 @@ insideGrid cellSizeX cellSizeY cells = translate (-centerX) (-centerY)
 atGridPos :: Float -> Float -> V Float -> Picture -> Picture
 atGridPos dx dy (V x y) = translate (x * dx) (y * dy)
 
-pictureGrid :: Float -> Float -> [[Picture]] -> Picture
-pictureGrid _ _ [] = blank
+pictureGrid :: Float -> Float -> Array (V Int) Picture -> Picture
 pictureGrid dx dy cells = insideGrid dx dy cells
-                        $ pictureCol dy
-                        $ pictureRow dx
-                      <$> cells
+                        $ pictures
+                        $ cellPicture <$> indices cells
+  where
+    cellPicture :: V Int -> Picture
+    cellPicture v = translate (x * dx) (y * dy)
+                  $ cells ! v
+      where
+        x, y :: Float
+        x = fromIntegral (vx v)
+        y = fromIntegral (vy v)
 
 
 guardPicture :: Bool -> Picture -> Picture
