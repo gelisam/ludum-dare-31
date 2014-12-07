@@ -55,7 +55,8 @@ mainBanana tick time inputEvent = return picture
     nextLevel = (+1) <$> levelNumber <@ goalEvent
     
     prevLevel :: Event t LevelNumber
-    prevLevel = subtract 1 <$> levelNumber <@ startEvent
+    prevLevel = whenE ((0 <) <$> levelNumber)
+              $ subtract 1 <$> levelNumber <@ startEvent
     
     nextWarpTilePos :: Behavior t TilePos
     nextWarpTilePos = stepper undefined
