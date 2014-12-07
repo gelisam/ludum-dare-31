@@ -33,7 +33,7 @@ directionalInput :: forall t. Frameworks t
                  => Event t ()
                  -> Event t InputEvent
                  -> Event t Dir4
-directionalInput checkForInput inputEvent = dirEvent
+directionalInput checkForInput inputEvent = nonZeroDir4Event
   where
     dirChange :: Event t (V Int -> V Int)
     dirChange = ((+)      <$> filterJust (keydown2dir <$> inputEvent))
@@ -42,15 +42,22 @@ directionalInput checkForInput inputEvent = dirEvent
     totalDir :: Behavior t (V Int)
     totalDir = accumB 0 dirChange
     
+    favorVertical :: Behavior t Bool
+    favorVertical = stepper True
+                  $ (True  <$ upEvent inputEvent)
+            `union` (True  <$ downEvent inputEvent)
+            `union` (False <$ leftEvent inputEvent)
+            `union` (False <$ rightEvent inputEvent)
+    
     newDir :: Event t (V Int)
     newDir = flip ($) <$> totalDir <@> dirChange
     
     dirEvent :: Event t (V Int)
-    dirEvent = filterJust
-             $ validateV
-           <$> forceDir4 True
-           <$> newDir
-       `union` (totalDir <@ checkForInput)
-      where
-        validateV 0 = Nothing
-        validateV x = Just x 
+    dirEvent = newDir `union` (totalDir <@ checkForInput)
+    
+    dir4Event :: Event t Dir4
+    dir4Event = forceDir4 <$> favorVertical
+                          <@> dirEvent
+    
+    nonZeroDir4Event :: Event t Dir4
+    nonZeroDir4Event = filterE (/= 0) dir4Event
