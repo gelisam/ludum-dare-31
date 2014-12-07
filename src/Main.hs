@@ -2,6 +2,7 @@
 module Main where
 
 import Data.Array
+import Data.Maybe
 import Data.Traversable
 import Graphics.Gloss
 import Graphics.Gloss.Interface.FRP.ReactiveBanana
@@ -61,7 +62,8 @@ mainBanana sprites tick time inputEvent = return picture
         go (Move {..}) = (mTilePos, mNewTile)
     
     inventoryChange :: Event t InventoryChanges
-    inventoryChange = mInventoryChanges <$> validMove
+    inventoryChange = (mInventoryChanges <$> validMove)
+              `union` levelCausedInventoryChange
     
     startEvent :: Event t ()
     startEvent = () <$ filterE (== Start) walkTile
@@ -98,8 +100,26 @@ mainBanana sprites tick time inputEvent = return picture
                              $ ((True,) . lLevelChanges . (levelData !!) <$> levelNumber <@ nextLevel)
                        `union` ((False,) <$> head <$> accumulatedChanges <@ prevLevel)
     
-    -- nextLevelCausedInventoryChanges :: Behavior t InventoryChanges
-    -- nextLevelCausedInventoryChanges = undefined
+    nextLevelCausedInventoryChanges :: Behavior t InventoryChanges
+    nextLevelCausedInventoryChanges = stepper []
+                                    $ filterE (not . null)
+                                    $ keysToRemove . subtract 1 <$> levelNumber <@ prevLevel
+      where
+        keysToRemove :: LevelNumber -> InventoryChanges
+        keysToRemove n = ConsumeKey <$> keyChanges
+          where
+            allChanges :: LevelChanges
+            allChanges = lLevelChanges (levelData !! n)
+            
+            tileChanges :: [Tile]
+            tileChanges = fmap snd allChanges
+            
+            keyChanges :: [KeyNumber]
+            keyChanges = mapMaybe isKey tileChanges
+            
+            isKey :: Tile -> Maybe KeyNumber
+            isKey (Key k) = Just k
+            isKey _ = Nothing
     
     warpTilePos :: Event t TilePos
     warpTilePos = nextWarpTilePos <@ inputUnblocked inputBlockingLevelPopup
@@ -107,8 +127,8 @@ mainBanana sprites tick time inputEvent = return picture
     levelChanges :: Event t (Bool, LevelChanges)
     levelChanges = nextLevelChanges <@ inputUnblocked inputBlockingLevelPopup
     
-    -- levelCausedInventoryChange :: Event t InventoryChanges
-    -- levelCausedInventoryChange = nextInventoryChanges <@ inputUnblocked inputBlockingLevelPopup
+    levelCausedInventoryChange :: Event t InventoryChanges
+    levelCausedInventoryChange = nextLevelCausedInventoryChanges <@ inputUnblocked inputBlockingLevelPopup
     
     
     -- popup stuff
