@@ -3,10 +3,6 @@ module Types where
 import Vec2d
 
 
-gameTitle :: String
-gameTitle = "More of the Same"
-
-
 type LevelNumber = Int
 type KeyNumber = Int
 

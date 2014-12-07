@@ -13,8 +13,8 @@ import Data.Bool.Extra
 import Graphics.Gloss.Extra
 import Input
 import InputBlocking
+import LevelData
 import Popup
-import Types
 
 
 titleScreen :: forall t. Frameworks t

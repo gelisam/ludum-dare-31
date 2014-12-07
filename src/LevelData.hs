@@ -4,6 +4,10 @@ import Types
 import Vec2d
 
 
+gameTitle :: String
+gameTitle = "More of the Same"
+
+
 startTilePos :: TilePos
 startTilePos = 0
 
