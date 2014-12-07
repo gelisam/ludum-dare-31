@@ -11,50 +11,74 @@ import Graphics.Gloss.Extra
 import Types
 
 
+data Sprite = Sprite
+  { basePicture :: Picture
+  , topPicture :: Picture
+  }
+
+blankSprite :: Sprite
+blankSprite = Sprite blank blank
+
+
 data Sprites = Sprites
-  { floorSprite        :: Picture
-  , wallSprite         :: Picture
-  , startSprite        :: Picture
-  , goalSprite         :: Picture
-  , playerSprite       :: Picture
-  , lockedDoorSprite   :: Picture
-  , unlockedDoorSprite :: Picture
-  , keySprite          :: Picture
+  { floorSprite        :: Sprite
+  , wallSprite         :: Sprite
+  , startSprite        :: Sprite
+  , goalSprite         :: Sprite
+  , playerSprite       :: Sprite
+  , lockedDoorSprite   :: Sprite
+  , unlockedDoorSprite :: Sprite
+  , keySprite          :: Sprite
   }
 
 loadSprites :: FilePath -> IO Sprites
-loadSprites images = Sprites <$> loadSprite floorPicture        (images </> "floor.bmp")
-                             <*> loadSprite wallPicture         (images </> "wall.bmp")
-                             <*> loadSprite startPicture        (images </> "start.bmp")
-                             <*> loadSprite goalPicture         (images </> "goal.bmp")
-                             <*> loadSprite playerPicture       (images </> "player.bmp")
-                             <*> loadSprite lockedDoorPicture   (images </> "locked.bmp")
-                             <*> loadSprite unlockedDoorPicture (images </> "unlocked.bmp")
-                             <*> loadSprite keyPicture          (images </> "key.bmp")
+loadSprites images = Sprites <$> loadSprite        floorPicture        (images </> "floor.bmp")
+                             <*> loadSprite        wallPicture         (images </> "wall.bmp")
+                             <*> loadLayeredSprite startPicture        (images </> "start.bmp")    (images </> "start-top.bmp")
+                             <*> loadLayeredSprite goalPicture         (images </> "goal.bmp")     (images </> "goal-top.bmp")
+                             <*> loadSprite        playerPicture       (images </> "player.bmp")
+                             <*> loadSprite        lockedDoorPicture   (images </> "locked.bmp")
+                             <*> loadLayeredSprite unlockedDoorPicture (images </> "unlocked.bmp") (images </> "unlocked-top.bmp")
+                             <*> loadSprite        keyPicture          (images </> "key.bmp")
 
-loadSprite :: Picture -> FilePath -> IO Picture
-loadSprite fallbackPicture imagePath = catch (uscale 6 <$> loadBMP imagePath) rescue
+loadPicture :: Picture -> FilePath -> IO Picture
+loadPicture fallbackPicture imagePath = catch (uscale 6 <$> loadBMP imagePath) rescue
   where
     rescue :: IOException -> IO Picture
     rescue err = do
       hPutStrLn stderr (show err)
       return fallbackPicture
 
-renderTile :: Sprites -> Tile -> Picture
-renderTile = flip go
+loadSprite :: Picture -> FilePath -> IO Sprite
+loadSprite fallbackPicture imagePath = Sprite <$> loadPicture fallbackPicture imagePath
+                                              <*> pure blank
+
+loadLayeredSprite :: Picture -> FilePath -> FilePath -> IO Sprite
+loadLayeredSprite fallbackPicture baseImagePath topImagePath = Sprite <$> loadPicture fallbackPicture baseImagePath
+                                                                      <*> loadPicture blank topImagePath
+
+
+tileSprite :: Sprites -> Tile -> Sprite
+tileSprite = flip go
   where
     go Start        = startSprite
     go Goal         = goalSprite
-    go Empty        = const blank
+    go Empty        = const blankSprite
     go Floor        = floorSprite
     go Wall         = wallSprite
-    go XWall        = const blank
+    go XWall        = const blankSprite
     go LockedDoor   = lockedDoorSprite
     go UnlockedDoor = unlockedDoorSprite
     go (Key _)      = keySprite
 
+renderTile :: Sprites -> Tile -> Picture
+renderTile sprites = basePicture . tileSprite sprites
+
+renderTileTop :: Sprites -> Tile -> Picture
+renderTileTop sprites = topPicture . tileSprite sprites
+
 renderPlayerSprite :: Sprites -> Picture
-renderPlayerSprite = playerSprite
+renderPlayerSprite = basePicture . playerSprite
 
 
 letterPicture :: String -> Picture

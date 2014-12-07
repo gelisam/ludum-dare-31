@@ -25,6 +25,10 @@ renderStage :: Sprites -> Stage -> Picture
 renderStage sprites = pictureGrid 60 60
                     . fmap (renderTile sprites)
 
+renderStageTop :: Sprites -> Stage -> Picture
+renderStageTop sprites = pictureGrid 60 60
+                       . fmap (renderTileTop sprites)
+
 atStagePos :: V Float -> Picture -> Picture
 atStagePos = atGridPos 60 60
 
@@ -58,5 +62,6 @@ renderGameState :: Sprites -> GameState -> Picture
 renderGameState sprites (GameState {..}) = renderHUD gLevelNumber
                                         <> renderStage sprites gStage
                                         <> insideStage gStage (renderPlayer sprites gPlayerGraphics)
+                                        <> renderStageTop sprites gStage
                                         <> renderInventory sprites gInventory
                                         <> renderDebugMessages gDebugMessages
