@@ -24,10 +24,10 @@ data Sprites = Sprites
 
 loadSprites :: FilePath -> IO Sprites
 loadSprites images = Sprites <$> pure floorPicture
-                             <*> pure wallPicture
+                             <*> loadSprite wallPicture (images </> "wall.bmp")
                              <*> pure startPicture
                              <*> pure goalPicture
-                             <*> loadSprite playerPicture (images </> "player.bmpp")
+                             <*> loadSprite playerPicture (images </> "player.bmp")
                              <*> pure lockedDoorPicture
                              <*> pure unlockedDoorPicture
                              <*> pure keyPicture
