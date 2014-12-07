@@ -1,3 +1,5 @@
+![Level 5, with two open doors.](images/screenshot.png)
+
 # I've Seen This Room Before
 
 This is my contribution for [Ludum Dare edition #31](http://ludumdare.com/compo/2014/12/03/welcome-to-ludum-dare-31/), a competition where you have to program and draw art (and make music, but I didn't bother) for a game in only 48 hours. This was my first Ludum Dare. It was quite a challenge!
