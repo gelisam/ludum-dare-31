@@ -1,5 +1,7 @@
 module GameLogic where
 
+import Data.List
+
 import Types
 import Vec2d
 
@@ -34,3 +36,11 @@ changeTile = uncurry setAtV
 changeStage :: LevelChanges -> Stage -> Stage
 changeStage = foldr (.) id
             . fmap changeTile
+
+changeInventory :: InventoryChanges -> Inventory -> Inventory
+changeInventory = foldr (.) id
+                . fmap go
+  where
+    go :: InventoryChange -> Inventory -> Inventory
+    go (ReceiveKey k) = (k:)
+    go (ConsumeKey k) = delete k

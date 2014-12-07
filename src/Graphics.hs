@@ -34,6 +34,12 @@ renderPlayer (PlayerGraphics {..}) = guardPicture gPlayerVisible
                                    $ atStagePos gPlayerScreenPos playerPicture
 
 
+renderInventory :: Inventory -> Picture
+renderInventory = translate (-305) 180
+                . pictureRow 25
+                . fmap (const keyPicture)
+
+
 renderDebugMessage :: String -> Picture
 renderDebugMessage = translate (-315) (-235)
                    . scale 0.1 0.1
@@ -47,4 +53,5 @@ renderGameState :: GameState -> Picture
 renderGameState (GameState {..}) = renderHUD gLevelNumber
                                 <> renderStage gStage
                                 <> insideStage gStage (renderPlayer gPlayerGraphics)
+                                <> renderInventory gInventory
                                 <> renderDebugMessages gDebugMessages

@@ -56,6 +56,9 @@ mainBanana tick time inputEvent = return picture
         go :: Move -> (TilePos, Tile)
         go (Move {..}) = (mTilePos, mNewTile)
     
+    inventoryChange :: Event t InventoryChanges
+    inventoryChange = mInventoryChanges <$> validMove
+    
     startEvent :: Event t ()
     startEvent = () <$ filterE (== Start) walkTile
     
@@ -85,11 +88,17 @@ mainBanana tick time inputEvent = return picture
     nextLevelChanges = stepper []
                              $ (levelData !!) <$> levelNumber <@ nextLevel
     
+    -- nextLevelCausedInventoryChanges :: Behavior t InventoryChanges
+    -- nextLevelCausedInventoryChanges = undefined
+    
     warpTilePos :: Event t TilePos
     warpTilePos = nextWarpTilePos <@ inputUnblocked inputBlockingLevelPopup
     
     levelChanges :: Event t LevelChanges
     levelChanges = nextLevelChanges <@ inputUnblocked inputBlockingLevelPopup
+    
+    -- levelCausedInventoryChange :: Event t InventoryChanges
+    -- levelCausedInventoryChange = nextInventoryChanges <@ inputUnblocked inputBlockingLevelPopup
     
     
     -- popup stuff
@@ -129,8 +138,9 @@ mainBanana tick time inputEvent = return picture
     -- debug stuff
     
     debugEvent :: Event t String
-    debugEvent = (printf "next level: %d" <$> nextLevel)
-         `union` (printf "prev level: %d" <$> prevLevel)
+    debugEvent = (printf "next level. inventory: %s" . show <$> inventory <@ nextLevel)
+         `union` (printf "prev level. inventory: %s" . show <$> inventory <@ prevLevel)
+         `union` (printf "inventory change: %s" . show <$> inventoryChange)
     
     
     -- construct the game state for this frame
@@ -145,7 +155,8 @@ mainBanana tick time inputEvent = return picture
            `union` (changeTile <$> tileChange)
     
     inventory :: Behavior t Inventory
-    inventory = pure []
+    inventory = accumB []
+              $ changeInventory <$> inventoryChange
     
     playerTilePos :: Behavior t TilePos
     playerTilePos = stepper startTilePos $ walkTilePos
@@ -158,7 +169,10 @@ mainBanana tick time inputEvent = return picture
     accumulatedChanges = pure []
     
     debugMessages :: Behavior t [String]
-    debugMessages = accumB [] $ (:) <$> debugEvent
+    debugMessages = accumB [] $ go <$> debugEvent
+      where
+        go :: String -> [String] -> [String]
+        go x = take 10 . (x:)
     
     gameState :: Behavior t GameState
     gameState = GameState <$> levelNumber
