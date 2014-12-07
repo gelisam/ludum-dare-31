@@ -50,9 +50,13 @@ guardPicture True = id
 guardPicture False = const blank
 
 
--- Workaround for a bug whereby drawing a sprite changes the text color.
+-- Workaround for a bug whereby drawing a sprite changes the active color.
+
 blackText :: String -> Picture
 blackText = color black . text
+
+blackCircle :: Float -> Picture
+blackCircle = color black . circle
 
 
 rectBoldPicture :: V Int -> Picture -> Picture

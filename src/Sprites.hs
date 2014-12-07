@@ -73,19 +73,19 @@ invisibleWallPicture :: Picture
 invisibleWallPicture = blank
 
 wallPicture :: Picture
-wallPicture = circle 30
+wallPicture = blackCircle 30
 
 startPicture :: Picture
-startPicture = circle 30
+startPicture = blackCircle 30
             <> letterPicture "S"
 
 goalPicture :: Picture
-goalPicture = circle 30
+goalPicture = blackCircle 30
            <> letterPicture "G"
 
 playerPicture :: Picture
 playerPicture = color white (thickCircle 0 60)
-             <> circle 30
+             <> blackCircle 30
              <> rotate 90 (letterPicture ":)")
 
 lockedDoorPicture :: Picture
@@ -93,11 +93,11 @@ lockedDoorPicture = unlockedDoorPicture
                  <> rotate (-90) (letterPicture "-")
 
 unlockedDoorPicture :: Picture
-unlockedDoorPicture = circle 30
+unlockedDoorPicture = blackCircle 30
                    <> rotate (-90) (letterPicture "D")
 
 keyPicture :: Picture
-keyPicture = circle 30
+keyPicture = blackCircle 30
           <> letterPicture "K"
 
 
