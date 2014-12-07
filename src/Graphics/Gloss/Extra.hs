@@ -48,3 +48,8 @@ pictureGrid dx dy cells = insideGrid dx dy cells
 guardPicture :: Bool -> Picture -> Picture
 guardPicture True = id
 guardPicture False = const blank
+
+
+boldPicture :: Picture -> Picture
+boldPicture picture = picture
+                   <> translate 1 0 picture
