@@ -12,6 +12,7 @@ validateTilePos xs i | inRange (bounds xs) i = Just (xs ! i)
 
 validateTile :: Inventory -> Tile -> Maybe InventoryChanges
 validateTile _     Wall       = Nothing
+validateTile _     XWall      = Nothing
 validateTile []    LockedDoor = Nothing
 validateTile (k:_) LockedDoor = Just [ConsumeKey k]
 validateTile _     (Key k)    = Just [ReceiveKey k]

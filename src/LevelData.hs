@@ -13,16 +13,16 @@ gameTitle = "I've Seen This Room Before"
 
 
 roomPadding :: V Int
-roomPadding = V 14 9
+roomPadding = V 13 9
 
 padTilePos :: TilePos -> TilePos
 padTilePos tilePos = tilePos + roomPadding + 1
 
 startTilePos :: TilePos
-startTilePos = padTilePos (V 0 5)
+startTilePos = padTilePos (V 1 5)
 
 goalTilePos :: TilePos
-goalTilePos = padTilePos (V 4 1)
+goalTilePos = padTilePos (V 5 1)
 
 startScreenPos :: ScreenPos
 startScreenPos = fmap fromIntegral startTilePos
@@ -68,23 +68,23 @@ initialStage = listArray (0, maxIndex)
     
     
     smallRoom :: [[Tile]]
-    smallRoom = [[Wall , Wall , Wall , Wall , Wall]   -- 6
-                ,[Start, Floor, Floor, Floor, Wall]   -- 5
-                ,[Wall , Floor, Floor, Floor, Wall]   -- 4
-                ,[Wall , Floor, Floor, Floor, Wall]   -- 3
-                ,[Wall , Floor, Floor, Floor, Wall]   -- 2
-                ,[Wall , Floor, Floor, Floor, Goal]   -- 1
-                ,[Wall , Wall , Wall , Wall , Wall]]  -- 0
-            --     0      1      2      3      4
+    smallRoom = [[Empty, Wall , Wall , Wall , Wall , Wall, Empty]   -- 6
+                ,[XWall, Start, Floor, Floor, Floor, Wall, Empty]   -- 5
+                ,[Empty, Wall , Floor, Floor, Floor, Wall, Empty]   -- 4
+                ,[Empty, Wall , Floor, Floor, Floor, Wall, Empty]   -- 3
+                ,[Empty, Wall , Floor, Floor, Floor, Wall, Empty]   -- 2
+                ,[Empty, Wall , Floor, Floor, Floor, Goal, XWall]   -- 1
+                ,[Empty, Wall , Wall , Wall , Wall , Wall, Empty]]  -- 0
+            --     0      1      2      3      4      5     6
 
 levelData :: [LevelChanges]
 levelData = (fmap.fmap) padData smallLevelData
   where
-    smallLevelData = [[(V 2 2, Wall)]
+    smallLevelData = [[(V 3 2, Wall)]
+                     ,[(V 3 1, LockedDoor)]
+                     ,[(V 3 4, Key 0)]
                      ,[(V 2 1, LockedDoor)]
-                     ,[(V 2 4, Key 0)]
-                     ,[(V 1 1, LockedDoor)]
-                     ,[(V 3 2, Wall)]
+                     ,[(V 4 2, Wall)]
                      ]
     
     padData :: LevelChange -> LevelChange

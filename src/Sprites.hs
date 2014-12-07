@@ -18,6 +18,9 @@ emptyPicture = blank
 floorPicture :: Picture
 floorPicture = blank
 
+invisibleWallPicture :: Picture
+invisibleWallPicture = blank
+
 wallPicture :: Picture
 wallPicture = circle 10
 
@@ -53,6 +56,7 @@ tilePicture Goal         = goalPicture
 tilePicture Empty        = emptyPicture
 tilePicture Floor        = floorPicture
 tilePicture Wall         = wallPicture
+tilePicture XWall        = invisibleWallPicture
 tilePicture LockedDoor   = lockedDoorPicture
 tilePicture UnlockedDoor = unlockedDoorPicture
 tilePicture (Key _)      = keyPicture

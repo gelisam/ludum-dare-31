@@ -13,6 +13,7 @@ data Tile = Start
           | Empty
           | Floor
           | Wall
+          | XWall
           | LockedDoor
           | UnlockedDoor
           | Key KeyNumber
