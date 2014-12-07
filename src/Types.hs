@@ -31,7 +31,7 @@ data InventoryChange = ReceiveKey KeyNumber
   deriving (Show, Eq)
 
 data Move = Move
-  { mTile :: Tile
+  { mNewTile :: Tile
   , mTilePos :: TilePos
   , mScreenPos :: ScreenPos
   , mInventoryChanges :: InventoryChanges

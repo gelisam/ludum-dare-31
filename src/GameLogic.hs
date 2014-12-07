@@ -18,12 +18,19 @@ validateMove :: Stage -> Inventory -> TilePos -> Maybe Move
 validateMove stage ks tilePos = do
     tile <- validateTilePos stage tilePos
     inventoryChanges <- validateTile ks tile
-    return $ Move tile
+    return $ Move (consumeTile tile)
                   tilePos
                   (fmap fromIntegral tilePos)
                   inventoryChanges
 
+consumeTile :: Tile -> Tile
+consumeTile LockedDoor = UnlockedDoor
+consumeTile (Key _)    = Floor
+consumeTile tile       = tile
+
+changeTile :: (TilePos, Tile) -> Stage -> Stage
+changeTile = uncurry setAtV
 
 changeStage :: LevelChanges -> Stage -> Stage
 changeStage = foldr (.) id
-            . fmap (uncurry setAtV)
+            . fmap changeTile

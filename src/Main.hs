@@ -1,4 +1,4 @@
-{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE RecordWildCards, ScopedTypeVariables #-}
 module Main where
 
 import Data.Traversable
@@ -45,10 +45,16 @@ mainBanana tick time inputEvent = return picture
     walkTilePos = mTilePos <$> validMove
     
     walkTile :: Event t Tile
-    walkTile = mTile <$> validMove
+    walkTile = mNewTile <$> validMove
     
     
     -- consequences of player movement
+    
+    tileChange :: Event t (TilePos, Tile)
+    tileChange = go <$> validMove
+      where
+        go :: Move -> (TilePos, Tile)
+        go (Move {..}) = (mTilePos, mNewTile)
     
     startEvent :: Event t ()
     startEvent = () <$ filterE (== Start) walkTile
@@ -135,7 +141,8 @@ mainBanana tick time inputEvent = return picture
     
     stage :: Behavior t Stage
     stage = accumB initialStage
-          $ changeStage <$> levelChanges
+                 $ (changeStage <$> levelChanges)
+           `union` (changeTile <$> tileChange)
     
     inventory :: Behavior t Inventory
     inventory = pure []
