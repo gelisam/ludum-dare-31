@@ -52,8 +52,8 @@ playBanana display colour frequency mPicture = do
       -- make sure the Behavior doesn't leak memory if mPicture ignores
       -- one or both kind of events
       let bPicture = bRawPicture
-                  <* stepper undefined eTick
-                  <* stepper undefined eEvent
+                  <* stepper (error "eTick") eTick
+                  <* stepper (error "eEvent") eEvent
       
       changes bPicture >>= reactimate' . fmap (fmap change)
       initial bPicture >>= liftIO . change

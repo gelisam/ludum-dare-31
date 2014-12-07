@@ -85,6 +85,7 @@ levelData = (fmap.fmap) padData smallLevelData
                      ,[(V 3 4, Key 0)]
                      ,[(V 2 1, LockedDoor)]
                      ,[(V 4 2, Wall)]
+                     ,[(V 5 1, Floor), (V 6 1, Empty)]
                      ]
     
     padData :: LevelChange -> LevelChange

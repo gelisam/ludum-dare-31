@@ -119,8 +119,7 @@ blockInputB tick time x0 startAnim = InputBlocking currentValue
     idleValue = stepper x0 $ lastInputBlockingFrame <$> startAnim
     
     lastFrame :: Animation a -> a
-    lastFrame anim | isInfinite d = undefined  -- we won't have to hold the last frame
-                   | otherwise    = snapshot anim d
+    lastFrame anim = snapshot anim d
       where
         d = duration anim
     

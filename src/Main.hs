@@ -8,6 +8,7 @@ import Graphics.Gloss.Interface.FRP.ReactiveBanana
 import Reactive.Banana
 import Reactive.Banana.Frameworks
 
+import Ending
 import GameAnimation
 import GameLogic
 import Graphics
@@ -72,6 +73,10 @@ mainBanana tick time inputEvent = return picture
     nextLevel = whenE ((lastLevel >) <$> levelNumber)
               $ (+1) <$> levelNumber <@ goalEvent
     
+    theEnd :: Event t ()
+    theEnd = whenE ((lastLevel ==) <$> levelNumber)
+           $ () <$ goalEvent
+    
     prevLevel :: Event t LevelNumber
     prevLevel = whenE ((0 <) <$> levelNumber)
               $ subtract 1 <$> levelNumber <@ startEvent
@@ -81,12 +86,12 @@ mainBanana tick time inputEvent = return picture
                     $ () <$ startEvent
     
     nextWarpTilePos :: Behavior t TilePos
-    nextWarpTilePos = stepper undefined
+    nextWarpTilePos = stepper (error "nextWarpTilePos")
                             $ (startTilePos <$ nextLevel)
                       `union` (goalTilePos  <$ prevLevel)
     
     nextLevelChanges :: Behavior t (Bool, LevelChanges)
-    nextLevelChanges = stepper undefined
+    nextLevelChanges = stepper (error "nextLevelChanges")
                              $ ((True,) <$> (levelData !!) <$> levelNumber <@ nextLevel)
                        `union` ((False,) <$> head <$> accumulatedChanges <@ prevLevel)
     
@@ -113,6 +118,10 @@ mainBanana tick time inputEvent = return picture
                             $ (prevLevelPopupAnimation <$> prevLevel)
                       `union` (nextLevelPopupAnimation <$> nextLevel)
     
+    inputBlockingEnding :: InputBlocking t Picture
+    inputBlockingEnding = blockInputB tick time blank
+                        $ endingAnimation <$ theEnd
+    
     
     -- animation stuff
     
@@ -134,6 +143,7 @@ mainBanana tick time inputEvent = return picture
     inputIsBlocked = or <$> sequenceA [ isBlockingInput inputBlockingPlayer
                                       , isBlockingInput inputBlockingTitleScreen
                                       , isBlockingInput inputBlockingLevelPopup
+                                      , isBlockingInput inputBlockingEnding
                                       ]
     
     
@@ -201,6 +211,7 @@ mainBanana tick time inputEvent = return picture
     picture = pictures <$> sequenceA [ renderGameState <$> gameState
                                      , inputBlockingValue inputBlockingTitleScreen
                                      , inputBlockingValue inputBlockingLevelPopup
+                                     , inputBlockingValue inputBlockingEnding
                                      ]
 
 main :: IO ()
