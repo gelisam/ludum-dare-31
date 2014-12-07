@@ -14,73 +14,67 @@ import Graphics.Gloss.Extra
 import Input
 import InputBlocking
 import Popup
-import Reactive.Banana.Animation
 import Types
 
 
 titleScreen :: forall t. Frameworks t
-            => Behavior t Float
+            => Event t ()
+            -> Behavior t Float
             -> Event t InputEvent
             -> InputBlocking t Picture
-titleScreen time inputEvent = inputBlockingTitleScreen
+titleScreen tick time inputEvent = inputBlockingBlinkingTitleScreen
   where
     -- keypress event
     
     anyKeyEvent :: Event t Key
-    anyKeyEvent = whenE isTitleScreenUp $ keydownEvent inputEvent
+    anyKeyEvent = whenE isWaitingForKey $ keydownEvent inputEvent
     
-    isTitleScreenUp :: Behavior t Bool
-    isTitleScreenUp = stepper True $ False <$ anyKeyEvent
+    isWaitingForKey :: Behavior t Bool
+    isWaitingForKey = stepper True $ False <$ anyKeyEvent
+    
+    inputBlockingNonBlinkingTitleScreen :: InputBlocking t Picture
+    inputBlockingNonBlinkingTitleScreen = blockInputB tick time staticTitleScreen
+                                        $ fadeOutTitleScreenAnimation <$ anyKeyEvent
     
     
     -- combine white filter + text
     
-    fadingTitleScreen :: Animated t Picture
-    fadingTitleScreen = mappend <$> fadingWhiteFilter
-                                <*> fadingText
+    fadeOutTitleScreenAnimation :: InputBlockingAnimation Picture
+    fadeOutTitleScreenAnimation = mappend <$> whiteFadeOutAnimation
+                                          <*> textFadeOutAnimation
+    
+    staticTitleScreen :: Picture
+    staticTitleScreen = staticWhiteFilter <> staticText
     
     
     -- blink while not fading, block until disposed.
     
-    blinkingTitleScreen :: Behavior t Picture
-    blinkingTitleScreen = mappend staticWhiteFilter <$> blinkingText
+    blinkingAnimation :: InputBlockingAnimation Picture
+    blinkingAnimation = mappend staticWhiteFilter <$> blinkingTextAnimation
     
-    inputBlockingTitleScreen :: InputBlocking t Picture
-    inputBlockingTitleScreen = InputBlocking possiblyBlinking
-                                             isTitleScreenUp
-                                             (() <$ anyKeyEvent)
+    inputBlockingBlinkingTitleScreen :: InputBlocking t Picture
+    inputBlockingBlinkingTitleScreen = inputBlockingNonBlinkingTitleScreen
+                                     { inputBlockingValue = possiblyBlinking
+                                     }
       where
         possiblyBlinking :: Behavior t Picture
-        possiblyBlinking = if_then_else <$> shouldBlink
+        possiblyBlinking = if_then_else <$> isWaitingForKey
                                         <*> blinkingTitleScreen
-                                        <*> animatedValue fadingTitleScreen
+                                        <*> inputBlockingValue inputBlockingNonBlinkingTitleScreen
         
-        shouldBlink :: Behavior t Bool
-        shouldBlink = (&&) <$> isTitleScreenUp
-                           <*> (not <$> isAnimating fadingTitleScreen)
-    
-    
-    -- white filter
-
-    fadingWhiteFilter :: Animated t Picture
-    fadingWhiteFilter = animateB time staticWhiteFilter
-                      $ whiteFilterAnimation <$ anyKeyEvent
-      where
-        whiteFilterAnimation :: Animation Picture
-        whiteFilterAnimation = makeWhiteFilter <$> fadeOut
-        
-        fadeOut :: Animation Float
-        fadeOut = interpolate 2 1 0
+        blinkingTitleScreen :: Behavior t Picture
+        blinkingTitleScreen = inputBlockingAnimationValue staticTitleScreen blinkingAnimation <$> time
     
     
     -- text
     
-    fadingText :: Animated t Picture
-    fadingText = animateB time staticText
-               $ rotateAway staticText <$ anyKeyEvent
+    textFadeOutAnimation :: InputBlockingAnimation Picture
+    textFadeOutAnimation = inputAllowingAnimation
+                         $ rotateAway staticText
+                        <> static blank
     
-    blinkingText :: Behavior t Picture
-    blinkingText = (commonText <>) <$> blinkingMessage
+    blinkingTextAnimation :: InputBlockingAnimation Picture
+    blinkingTextAnimation = (commonText <>) <$> blinkingMessageAnimation
     
     staticText :: Picture
     staticText = commonText <> staticMessage
@@ -105,8 +99,9 @@ titleScreen time inputEvent = inputBlockingTitleScreen
             (x, y) = (650, 80)
             (dx, dy) = (20, 10)
     
-    blinkingMessage :: Behavior t Picture
-    blinkingMessage = guardPicture <$> (animationValue True (blinking 1 0.3) <$> time)
+    blinkingMessageAnimation :: InputBlockingAnimation Picture
+    blinkingMessageAnimation = inputBlockingAnimation
+                    $ guardPicture <$> blinking 1 0.3
                                    <*> pure staticMessage
     
     staticMessage :: Picture

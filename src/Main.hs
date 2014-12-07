@@ -71,7 +71,7 @@ mainBanana tick time inputEvent = return picture
     -- popup stuff
     
     inputBlockingTitleScreen :: InputBlocking t Picture
-    inputBlockingTitleScreen = titleScreen time inputEvent
+    inputBlockingTitleScreen = titleScreen tick time inputEvent
     
     inputBlockingLevelPopup :: InputBlocking t Picture
     inputBlockingLevelPopup = blockInputB tick time blank
