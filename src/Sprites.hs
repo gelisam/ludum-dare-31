@@ -29,6 +29,7 @@ data Sprites = Sprites
   , lockedDoorSprite   :: Sprite
   , unlockedDoorSprite :: Sprite
   , keySprite          :: Sprite
+  , inventoryKeySprite :: Sprite
   }
 
 loadSprites :: FilePath -> IO Sprites
@@ -40,6 +41,7 @@ loadSprites images = Sprites <$> loadSprite        floorPicture        (images <
                              <*> loadSprite        lockedDoorPicture   (images </> "locked.bmp")
                              <*> loadLayeredSprite unlockedDoorPicture (images </> "unlocked.bmp") (images </> "unlocked-top.bmp")
                              <*> loadSprite        keyPicture          (images </> "key.bmp")
+                             <*> loadSprite        keyPicture          (images </> "inventory-key.bmp")
 
 loadPicture :: Picture -> FilePath -> IO Picture
 loadPicture fallbackPicture imagePath = catch (uscale 6 <$> loadBMP imagePath) rescue
@@ -79,6 +81,9 @@ renderTileTop sprites = topPicture . tileSprite sprites
 
 renderPlayerSprite :: Sprites -> Picture
 renderPlayerSprite = basePicture . playerSprite
+
+renderInventoryKey :: Sprites -> KeyNumber -> Picture
+renderInventoryKey sprites _ = basePicture (inventoryKeySprite sprites)
 
 
 letterPicture :: String -> Picture

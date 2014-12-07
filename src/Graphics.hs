@@ -46,7 +46,7 @@ renderInventory sprites = translate (-300) 180
   where
     renderTinyKey :: KeyNumber -> Picture
     renderTinyKey k = uscale 0.5
-                    $ renderTile sprites (Key k)
+                    $ renderInventoryKey sprites k
 
 
 renderDebugMessage :: String -> Picture
