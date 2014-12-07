@@ -19,10 +19,11 @@ import Types
 
 titleScreen :: forall t. Frameworks t
             => Event t ()
+            -> Event t ()
             -> Behavior t Float
             -> Event t InputEvent
             -> InputBlocking t Picture
-titleScreen tick time inputEvent = inputBlockingBlinkingTitleScreen
+titleScreen showTitleScreen tick time inputEvent = inputBlockingBlinkingTitleScreen
   where
     -- keypress event
     
@@ -30,14 +31,28 @@ titleScreen tick time inputEvent = inputBlockingBlinkingTitleScreen
     anyKeyEvent = whenE isWaitingForKey $ keydownEvent inputEvent
     
     isWaitingForKey :: Behavior t Bool
-    isWaitingForKey = stepper True $ False <$ anyKeyEvent
+    isWaitingForKey = stepper True $ (False <$ anyKeyEvent)
+                             `union` (True  <$ inputUnblocked inputBlockingFadeIn)
+    
+    inputBlockingFadeIn :: InputBlocking t Picture
+    inputBlockingFadeIn = blockInputB tick time blank
+                        $ fadeInTitleScreenAnimation <$ showTitleScreen
+    
+    inputBlockingFadeOut :: InputBlocking t Picture
+    inputBlockingFadeOut = blockInputB tick time blank
+                         $ fadeOutTitleScreenAnimation <$ anyKeyEvent
     
     inputBlockingNonBlinkingTitleScreen :: InputBlocking t Picture
     inputBlockingNonBlinkingTitleScreen = blockInputB tick time staticTitleScreen
-                                        $ fadeOutTitleScreenAnimation <$ anyKeyEvent
+                                        $ (fadeInTitleScreenAnimation <$ showTitleScreen)
+                                  `union` (fadeOutTitleScreenAnimation <$ anyKeyEvent)
     
     
     -- combine white filter + text
+    
+    fadeInTitleScreenAnimation :: InputBlockingAnimation Picture
+    fadeInTitleScreenAnimation = mappend <$> whiteFadeInAnimation
+                                         <*> textFadeInAnimation
     
     fadeOutTitleScreenAnimation :: InputBlockingAnimation Picture
     fadeOutTitleScreenAnimation = mappend <$> whiteFadeOutAnimation
@@ -67,6 +82,10 @@ titleScreen tick time inputEvent = inputBlockingBlinkingTitleScreen
     
     
     -- text
+    
+    textFadeInAnimation :: InputBlockingAnimation Picture
+    textFadeInAnimation = inputBlockingAnimation
+                        $ rotateIntoView staticText
     
     textFadeOutAnimation :: InputBlockingAnimation Picture
     textFadeOutAnimation = inputAllowingAnimation

@@ -58,6 +58,10 @@ mainBanana tick time inputEvent = return picture
     prevLevel = whenE ((0 <) <$> levelNumber)
               $ subtract 1 <$> levelNumber <@ startEvent
     
+    showTitleScreen :: Event t ()
+    showTitleScreen = whenE ((0 ==) <$> levelNumber)
+                    $ () <$ startEvent
+    
     nextWarpTilePos :: Behavior t TilePos
     nextWarpTilePos = stepper undefined
                             $ (startTilePos <$ nextLevel)
@@ -71,7 +75,7 @@ mainBanana tick time inputEvent = return picture
     -- popup stuff
     
     inputBlockingTitleScreen :: InputBlocking t Picture
-    inputBlockingTitleScreen = titleScreen tick time inputEvent
+    inputBlockingTitleScreen = titleScreen showTitleScreen tick time inputEvent
     
     inputBlockingLevelPopup :: InputBlocking t Picture
     inputBlockingLevelPopup = blockInputB tick time blank
