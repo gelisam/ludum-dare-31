@@ -8,7 +8,7 @@ import Reactive.Banana
 import Reactive.Banana.Frameworks
 import Text.Printf
 
-import Animation
+import GameAnimation
 import Graphics
 import Input
 import InputBlocking
@@ -89,19 +89,10 @@ mainBanana tick time inputEvent = return picture
     warpScreenPos :: Event t ScreenPos
     warpScreenPos = fmap fromIntegral <$> warpTilePos
     
-    walkAnimation :: Event t (Animation ScreenPos)
-    walkAnimation = interpolate 0.05 <$> playerScreenPos <@> walkScreenPos
-    
-    warpAnimation :: Event t (Animation ScreenPos)
-    warpAnimation = interpolate 1 <$> playerScreenPos <@> warpScreenPos
-    
-    inputBlockingPlayerScreenPos :: InputBlocking t ScreenPos
-    inputBlockingPlayerScreenPos = blockInputB tick time startScreenPos
-                                 $ (inputBlockingAnimation <$> walkAnimation)
-                           `union` (inputBlockingAnimation <$> warpAnimation)
-    
     inputBlockingPlayer :: InputBlocking t PlayerGraphics
-    inputBlockingPlayer = PlayerGraphics True <$> inputBlockingPlayerScreenPos
+    inputBlockingPlayer = blockInputB tick time initialPlayerGraphics
+                                 $ (walkAnimation <$> playerScreenPos <@> walkScreenPos)
+                           `union` (warpAnimation <$> playerScreenPos <@> warpScreenPos)
     
     inputIsBlocked :: Behavior t Bool
     inputIsBlocked = or <$> sequenceA [ isBlockingInput inputBlockingPlayer
