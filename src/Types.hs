@@ -20,10 +20,10 @@ data Tile = Start
 
 type Stage = [[Tile]]
 
-type LevelChanges = [(V Int, Tile)]
-
 type TilePos = V Int
 type ScreenPos = V Float
+
+type LevelChanges = [(TilePos, Tile)]
 
 data PlayerGraphics = PlayerGraphics
   { gPlayerVisible      :: Bool
