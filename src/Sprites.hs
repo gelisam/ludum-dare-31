@@ -23,14 +23,14 @@ data Sprites = Sprites
   }
 
 loadSprites :: FilePath -> IO Sprites
-loadSprites images = Sprites <$> loadSprite floorPicture (images </> "floor.bmp")
-                             <*> loadSprite wallPicture (images </> "wall.bmp")
-                             <*> pure startPicture
-                             <*> pure goalPicture
-                             <*> loadSprite playerPicture (images </> "player.bmp")
-                             <*> pure lockedDoorPicture
-                             <*> pure unlockedDoorPicture
-                             <*> pure keyPicture
+loadSprites images = Sprites <$> loadSprite floorPicture        (images </> "floor.bmp")
+                             <*> loadSprite wallPicture         (images </> "wall.bmp")
+                             <*> loadSprite startPicture        (images </> "start.bmp")
+                             <*> loadSprite goalPicture         (images </> "goal.bmp")
+                             <*> loadSprite playerPicture       (images </> "player.bmp")
+                             <*> loadSprite lockedDoorPicture   (images </> "locked.bmp")
+                             <*> loadSprite unlockedDoorPicture (images </> "unlocked.bmp")
+                             <*> loadSprite keyPicture          (images </> "key.bmp")
 
 loadSprite :: Picture -> FilePath -> IO Picture
 loadSprite fallbackPicture imagePath = catch (uscale 6 <$> loadBMP imagePath) rescue
