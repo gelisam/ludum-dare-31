@@ -58,6 +58,9 @@ blackText = color black . text
 blackCircle :: Float -> Picture
 blackCircle = color black . circle
 
+blackLine :: Path -> Picture
+blackLine = color black . line
+
 
 rectBoldPicture :: V Int -> Picture -> Picture
 rectBoldPicture size picture = pictures $ offsetPicture <$> range (0, size)

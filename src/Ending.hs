@@ -56,7 +56,7 @@ endingAnimation = inputBlockingAnimation
               <> accent
         
         accent :: Picture
-        accent = line [(x, y), (x + dx, y + dy)]
+        accent = blackLine [(x, y), (x + dx, y + dy)]
           where
             (x, y) = (97, 12)
             (dx, dy) = (4, 2)

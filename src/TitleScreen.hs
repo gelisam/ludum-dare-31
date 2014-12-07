@@ -110,7 +110,7 @@ titleScreen showTitleScreen tick time inputEvent = inputBlockingBlinkingTitleScr
             <> accent
       where
         accent :: Picture
-        accent = line [(x, y), (x + dx, y + dy)]
+        accent = blackLine [(x, y), (x + dx, y + dy)]
           where
             (x, y) = (650, 80)
             (dx, dy) = (20, 10)
