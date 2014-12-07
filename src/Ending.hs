@@ -21,7 +21,7 @@ endingAnimation = inputBlockingAnimation
     fadeToWhite = makeWhiteFilter <$> interpolate 5 0 1
     staticWhite = makeWhiteFilter 1
     
-    rollCredits = translate 0 <$> interpolate 20 (-750) 0
+    rollCredits = translate 0 <$> interpolate 20 (-800) 0
                               <*> pure credits
     
     credits = mappend endingScreen
@@ -36,6 +36,9 @@ endingAnimation = inputBlockingAnimation
             , blank
             , sectionTitle "Art"
             , author
+            , blank
+            , sectionTitle "Playtesting"
+            , text' "Nadezda Ershova"
             , blank
             , blank
             , text' "Created in 48h for Ludum Dare 31, with"
