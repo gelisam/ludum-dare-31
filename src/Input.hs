@@ -27,6 +27,10 @@ keydown2dir :: Num a => InputEvent -> Maybe (V a)
 keydown2dir (EventKey k Down _ _) = key2dir k
 keydown2dir _ = Nothing
 
+keyup2dir :: Num a => InputEvent -> Maybe (V a)
+keyup2dir (EventKey k Up _ _) = key2dir k
+keyup2dir _ = Nothing
+
 
 keydownEvent :: Event t InputEvent -> Event t Key
 keydownEvent = filterJust . fmap go

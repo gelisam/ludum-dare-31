@@ -8,11 +8,11 @@ import Graphics.Gloss.Interface.FRP.ReactiveBanana
 import Reactive.Banana
 import Reactive.Banana.Frameworks
 
+import Controls
 import Ending
 import GameAnimation
 import GameLogic
 import Graphics
-import Input
 import InputBlocking
 import LevelData
 import Popup
@@ -36,7 +36,8 @@ mainBanana sprites tick time inputEvent = return picture
     canMove = not <$> inputIsBlocked
     
     dirEvent :: Event t (V Int)
-    dirEvent = whenE canMove $ filterJust $ keydown2dir <$> inputEvent
+    dirEvent = whenE canMove
+             $ directionalInput (inputUnblocked inputBlockingPlayer) inputEvent
     
     potentialWalkTilePos :: Event t TilePos
     potentialWalkTilePos = (+) <$> playerTilePos <@> dirEvent
