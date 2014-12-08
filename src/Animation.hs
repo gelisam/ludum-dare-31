@@ -29,7 +29,7 @@ sampleAnimation anim | isInfinite (duration anim) = sampleAnimation (matchDurati
 -- >>> sampleAnimation $ anim <> idle 3 "baz"
 -- ["foo","foo","bar","bar","baz","baz","baz"]
 instance Monoid (Animation a) where
-    mempty = Animation (error "mempty Animation") 0
+    mempty = Animation undefined 0
     anim1 `mappend` anim2 = Animation f (d1 + d2)
       where
         d1 = duration anim1

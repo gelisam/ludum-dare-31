@@ -37,7 +37,7 @@ animateB time x0 startAnim = Animated currentValue isCurrentAnimationInProgress
     idleValue = stepper x0 $ lastFrame <$> startAnim
     
     lastFrame :: Animation a -> a
-    lastFrame anim | isInfinite d = error "lastFrame2"  -- we won't have to hold the last frame
+    lastFrame anim | isInfinite d = undefined  -- we won't have to hold the last frame
                    | otherwise    = snapshot anim d
       where
         d = duration anim

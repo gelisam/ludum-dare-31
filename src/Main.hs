@@ -95,12 +95,12 @@ mainBanana sprites tick time inputEvent = return picture
     -- otherwise its previous value will get executed at each subsequent level.
     
     nextWarpTilePos :: Behavior t TilePos
-    nextWarpTilePos = stepper (error "nextWarpTilePos")
+    nextWarpTilePos = stepper undefined
                             $ (startTilePos <$ nextLevel)
                       `union` (goalTilePos  <$ prevLevel)
     
     nextLevelChanges :: Behavior t (Bool, LevelChanges)
-    nextLevelChanges = stepper (error "nextLevelChanges")
+    nextLevelChanges = stepper undefined
                              $ ((True,) . lLevelChanges . (levelData !!) <$> levelNumber <@ nextLevel)
                        `union` ((False,) <$> head <$> accumulatedChanges <@ prevLevel)
     
