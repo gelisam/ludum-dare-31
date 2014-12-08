@@ -108,7 +108,10 @@ levelData = padData <$> smallLevelData
                      , LevelDescription [(V 2 1, LockedDoor)]            "Another door appears!"  "(the door disappears silently)"
                      , LevelDescription [(V 4 2, Wall)]                  "Another wall appears!"  "(yes, better keep exploring)"
                      , LevelDescription [(V 4 4, Wall)]                  "You got it!"            "(where are you going?)"
-                     , LevelDescription [(V 3 5, LockedDoor)]            "New day, new door."     "(puzzle reset)"
+                     , LevelDescription [(V 3 5, LockedDoor)
+                                        ,(V 2 1, Floor)
+                                        ,(V 3 1, Floor)
+                                        ]                                "New day, new door."     "(puzzle reset)"
                      , LevelDescription [(V 3 3, LockedDoor)
                                         ,(V 3 2, LockedDoor)
                                         ]                                "A matching set!"        "(no more matching set)"
