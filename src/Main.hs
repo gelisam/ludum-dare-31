@@ -90,6 +90,10 @@ mainBanana sprites tick time inputEvent = return picture
     showTitleScreen = whenE ((0 ==) <$> levelNumber)
                     $ () <$ startEvent
     
+    
+    -- careful with those 'nextSomething': update it at every level transition,
+    -- otherwise its previous value will get executed at each subsequent level.
+    
     nextWarpTilePos :: Behavior t TilePos
     nextWarpTilePos = stepper (error "nextWarpTilePos")
                             $ (startTilePos <$ nextLevel)
@@ -102,8 +106,8 @@ mainBanana sprites tick time inputEvent = return picture
     
     nextLevelCausedInventoryChanges :: Behavior t InventoryChanges
     nextLevelCausedInventoryChanges = stepper []
-                                    $ filterE (not . null)
-                                    $ keysToRemove . subtract 1 <$> levelNumber <@ prevLevel
+                                    $ (keysToRemove . subtract 1 <$> levelNumber <@ prevLevel)
+                              `union` ([] <$ nextLevel)
       where
         keysToRemove :: LevelNumber -> InventoryChanges
         keysToRemove n = ConsumeKey <$> keyChanges
