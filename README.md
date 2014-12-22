@@ -20,3 +20,6 @@ It's a mystery. I suggest you continue going up. Or down; they both lead to the 
 1.  This seems impossible. Is it possible to complete this game?
     
     Yes. Keep exporing! This is a game where the challenge is to figure out the mechanics. There are no hidden passages or anything like that, everything you need to know is in plain sight, you just don't understand it yet.
+1.  I give up. What's the solution?
+    
+    Okay, okay, here's a [walkthrough](https://www.youtube.com/watch?v=_S2D_-qNV4U).
